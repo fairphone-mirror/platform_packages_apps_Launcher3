@@ -15,9 +15,12 @@
  */
 package com.android.launcher3.model;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.UserHandle;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Pair;
 import com.android.launcher3.AllAppsList;
@@ -31,16 +34,21 @@ import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherModel.CallbackTask;
 import com.android.launcher3.LauncherModel.Callbacks;
 import com.android.launcher3.LauncherSettings;
+import com.android.launcher3.R;
 import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.GridOccupancy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Task to add auto-created workspace items.
  */
 public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
+
+    static final String TAG = "AddWorkspaceItemsTask";
 
     private final List<Pair<ItemInfo, Object>> mItemList;
 
@@ -60,6 +68,10 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
 
         final ArrayList<ItemInfo> addedItemsFinal = new ArrayList<>();
         final ArrayList<Long> addedWorkspaceScreensFinal = new ArrayList<>();
+
+        // Generic shortcut preferred placements
+        final Map<ComponentName, Pair<Long, int[]>> shortcutPreferredPlacements
+                = getShortcutPreferredPlacements(context, R.array.shortcut_preferred_placements);
 
         // Get the list of workspace screens.  We need to append to this list and
         // can not use sBgWorkspaceScreens because loadWorkspace() may not have been
@@ -90,8 +102,9 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
 
             for (ItemInfo item : filteredItems) {
                 // Find appropriate space for the item.
-                Pair<Long, int[]> coords = findSpaceForItem(app, dataModel, workspaceScreens,
-                        addedWorkspaceScreensFinal, item.spanX, item.spanY);
+                Pair<Long, int[]> coords = findSpaceForItem(app, dataModel,
+                        shortcutPreferredPlacements.get(item.getIntent().getComponent()),
+                        workspaceScreens, addedWorkspaceScreensFinal, item.spanX, item.spanY);
                 long screenId = coords.first;
                 int[] cordinates = coords.second;
 
@@ -211,6 +224,20 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
             ArrayList<Long> workspaceScreens,
             ArrayList<Long> addedWorkspaceScreensFinal,
             int spanX, int spanY) {
+        return findSpaceForItem(app, dataModel, null, workspaceScreens,
+                addedWorkspaceScreensFinal, spanX, spanY);
+    }
+
+    /**
+     * Find a position on the screen for the given size or adds a new screen.
+     * @return screenId and the coordinates for the item.
+     */
+    protected Pair<Long, int[]> findSpaceForItem(
+            LauncherAppState app, BgDataModel dataModel,
+            Pair<Long, int[]> shortcutPreferredPlacement,
+            ArrayList<Long> workspaceScreens,
+            ArrayList<Long> addedWorkspaceScreensFinal,
+            int spanX, int spanY) {
         LongSparseArray<ArrayList<ItemInfo>> screenItems = new LongSparseArray<>();
 
         // Use sBgItemsIdMap as all the items are already loaded.
@@ -233,12 +260,25 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
         boolean found = false;
 
         int screenCount = workspaceScreens.size();
-        // First check the preferred screen.
-        int preferredScreenIndex = workspaceScreens.isEmpty() ? 0 : 1;
-        if (preferredScreenIndex < screenCount) {
-            screenId = workspaceScreens.get(preferredScreenIndex);
-            found = findNextAvailableIconSpaceInScreen(
-                    app, screenItems.get(screenId), cordinates, spanX, spanY);
+
+        if (shortcutPreferredPlacement != null) {
+            // First, check the preferred placement.
+            screenId = shortcutPreferredPlacement.first;
+            cordinates = shortcutPreferredPlacement.second;
+            if (screenId < screenCount) {
+                found = isAvailableIconSpaceInScreen(
+                        app, screenItems.get(screenId), cordinates, spanX, spanY);
+            }
+        }
+
+        if (!found) {
+            // First check the preferred screen.
+            int preferredScreenIndex = workspaceScreens.isEmpty() ? 0 : 1;
+            if (preferredScreenIndex < screenCount) {
+                screenId = workspaceScreens.get(preferredScreenIndex);
+                found = findNextAvailableIconSpaceInScreen(
+                        app, screenItems.get(screenId), cordinates, spanX, spanY);
+            }
         }
 
         if (!found) {
@@ -273,9 +313,32 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
         return Pair.create(screenId, cordinates);
     }
 
-    private boolean findNextAvailableIconSpaceInScreen(
+    /**
+     * Validate that a specific icon space is available.
+     * <p>
+     * Heavily inspired by #findNextAvailableIconSpaceInScreen(ArrayList<>,
+     * int[], int, int) - re-uses factored out code in
+     * itemInfosToGridOccupancy().
+     *
+     * @return true if the specific icon space is available.
+     */
+    private static boolean isAvailableIconSpaceInScreen(
             LauncherAppState app, ArrayList<ItemInfo> occupiedPos,
             int[] xy, int spanX, int spanY) {
+        GridOccupancy occupied = itemInfosToGridOccupancy(app, occupiedPos);
+        return occupied.isRegionVacant(xy[0], xy[1], spanX, spanY);
+    }
+
+    /*
+     * Generate GridOccupancy from array of ItemInfo
+     *
+     * Factored out from #findNextAvailableIconSpaceInScreen(ArrayList<>, int[], int, int)
+     * to be re-used by #isAvailableIconSpaceInScreen(ArrayList<>, int[], int, int)
+     *
+     * @return GridOccupancy with coordinates from items marked as occupied.
+     */
+    private static GridOccupancy itemInfosToGridOccupancy(
+            LauncherAppState app, ArrayList<ItemInfo> occupiedPos) {
         InvariantDeviceProfile profile = app.getInvariantDeviceProfile();
 
         GridOccupancy occupied = new GridOccupancy(profile.numColumns, profile.numRows);
@@ -284,7 +347,56 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                 occupied.markCells(r, true);
             }
         }
+        return occupied;
+    }
+
+    private static boolean findNextAvailableIconSpaceInScreen(
+            LauncherAppState app, ArrayList<ItemInfo> occupiedPos,
+            int[] xy, int spanX, int spanY) {
+        GridOccupancy occupied = itemInfosToGridOccupancy(app, occupiedPos);
         return occupied.findVacantCell(xy, spanX, spanY);
     }
 
+    /**
+     * Get the shortcut preferred placements from a resource array.
+     * <p>
+     * An item (a String) should contain the following information separated by commas:
+     * <ul>
+     *     <li>the {@link ComponentName}</li>
+     *     <li>the screen id (e.g. 0 for the main screen</li>
+     *     <li>the abscissa (aka cell X)</li>
+     *     <li>the ordinate (aka cell Y)</li>
+     * </ul>
+     * @param context the context to read the resources from.
+     * @param array the string array resource to inflate from.
+     * @return a map of valid placements found in the resource array.
+     * @throws Resources.NotFoundException if the string array cannot be loaded from the context resources.
+     */
+    private static Map<ComponentName, Pair<Long, int[]>> getShortcutPreferredPlacements(Context context, int array)
+            throws Resources.NotFoundException {
+        final String[] rawPlacements = context.getResources().getStringArray(array);
+        final Map<ComponentName, Pair<Long, int[]>> placements = new HashMap<>(rawPlacements.length);
+
+        for (String rawPlacement : rawPlacements) {
+            final String[] items = rawPlacement.split(",");
+
+            if (items.length != 4) {
+                Log.e(TAG, "Invalid preferred placement : " + rawPlacement
+                        + ", 4 comma-separated items were expected");
+                continue;
+            }
+
+            try {
+                final ComponentName component = ComponentName.unflattenFromString(items[0]);
+                final long screenId = Long.valueOf(items[1]);
+                final int cellX = Integer.parseInt(items[2]);
+                final int cellY = Integer.parseInt(items[3]);
+                placements.put(component, new Pair<>(screenId, new int[] {cellX, cellY}));
+            } catch (NumberFormatException ex) {
+                Log.e(TAG, "Invalid preferred placement: " + rawPlacement, ex);
+            }
+        }
+
+        return placements;
+    }
 }

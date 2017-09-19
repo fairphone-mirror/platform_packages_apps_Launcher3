@@ -149,4 +149,7 @@
     <integer name="config_recentsMaxThumbnailCacheSize">6</integer>
     <integer name="config_recentsMaxIconCacheSize">12</integer>
 
+<!-- Shortcut preferred placements.  An item denotes a component (component name) and its
+     placement on a screen (screen and coordinates). These elements have to be comma-separated. -->
+    <string-array name="shortcut_preferred_placements" translatable="false" />
 </resources>

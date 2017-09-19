@@ -109,4 +109,8 @@
     <item type="id" name="action_move_screen_forwards" />
     <item type="id" name="action_resize" />
     <item type="id" name="action_deep_shortcuts" />
+
+<!-- Shortcut preferred placements.  An item denotes a component (component name) and its
+     placement on a screen (screen and coordinates). These elements have to be comma-separated. -->
+    <string-array name="shortcut_preferred_placements" translatable="false" />
 </resources>

@@ -39,4 +39,7 @@ public final class FeatureFlags {
     public static final boolean PULLDOWN_SEARCH = false;
     // When enabled the status bar may show dark icons based on the top of the wallpaper.
     public static final boolean LIGHT_STATUS_BAR = false;
+
+    // Feature flag to hide the QSB
+    public static final boolean HIDE_QSB = false;
 }

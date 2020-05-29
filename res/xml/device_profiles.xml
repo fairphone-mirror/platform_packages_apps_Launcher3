@@ -87,14 +87,6 @@
             launcher:iconTextSize="13.0"
             launcher:canBeDefault="true" />
 
-        <display-option
-            launcher:name="Nexus 5"
-            launcher:minWidthDps="335"
-            launcher:minHeightDps="567"
-            launcher:iconImageSize="54"
-            launcher:iconTextSize="13.0"
-            launcher:canBeDefault="true" />
-
     </grid-option>
 
     <grid-option
@@ -106,6 +98,14 @@
         launcher:numHotseatIcons="5"
         launcher:dbFile="launcher.db"
         launcher:defaultLayoutId="@xml/default_workspace_5x5" >
+
+        <display-option
+            launcher:name="Nexus 5"
+            launcher:minWidthDps="335"
+            launcher:minHeightDps="567"
+            launcher:iconImageSize="54"
+            launcher:iconTextSize="13.0"
+            launcher:canBeDefault="true" />
 
         <display-option
             launcher:name="Large Phone"

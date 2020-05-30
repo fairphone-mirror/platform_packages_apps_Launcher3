@@ -433,6 +433,10 @@ public class Launcher extends StatefulActivity<LauncherState> implements Launche
         // Listen for broadcasts
         registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
+        IntentFilter pkgAddIntentFilter = new  IntentFilter(Intent.ACTION_PACKAGE_ADDED);
+        pkgAddIntentFilter.addDataScheme("package");
+        registerReceiver(mPkgAddReceiver, pkgAddIntentFilter);
+
         getSystemUiController().updateUiState(SystemUiController.UI_STATE_BASE_WINDOW,
                 Themes.getAttrBoolean(this, R.attr.isWorkspaceDarkText));
 
@@ -1330,7 +1334,26 @@ public class Launcher extends StatefulActivity<LauncherState> implements Launche
         }
     };
 
-    private void updateNotificationDots(Predicate<PackageUserKey> updatedDots) {
+    private final BroadcastReceiver mPkgAddReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                 Log.i(TAG,"---receive package_added, App drawer visible:" + mAppsView.getVisibility());
+                 LauncherAppState app = LauncherAppState.getInstanceNoCreate();
+
+                 if ((app != null) && (mAppsView.getVisibility()!=View.VISIBLE)) {
+                     Log.i(TAG,"---receive package_added,reload launcher");
+
+                     // Reset AllApps to its initial state only if we are not in the middle of processing a multi-step drop
+                     if (mPendingRequestArgs == null) {
+                         mStateManager.goToState(NORMAL);
+                     }
+
+                     app.getModel().forceReload();
+                 }
+        }
+    };
+
+    public void updateNotificationDots(Predicate<PackageUserKey> updatedDots) {
         mWorkspace.updateNotificationDots(updatedDots);
         mAppsView.getAppsStore().updateNotificationDots(updatedDots);
     }

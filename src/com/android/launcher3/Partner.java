@@ -18,6 +18,7 @@ package com.android.launcher3;
 
 import static com.android.launcher3.util.PackageManagerHelper.findSystemApk;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
@@ -42,6 +43,9 @@ public class Partner {
     public static final String RES_FOLDER = "partner_folder";
     public static final String RES_WALLPAPERS = "partner_wallpapers";
     public static final String RES_DEFAULT_LAYOUT = "partner_default_layout";
+
+    private static final String RES_DEFAULT_LAYOUT_ORANGE_SPAIN =
+            "partner_default_layout_orange_spain";
 
     public static final String RES_DEFAULT_WALLPAPER_HIDDEN = "default_wallpapper_hidden";
     public static final String RES_SYSTEM_WALLPAPER_DIR = "system_wallpaper_directory";
@@ -77,9 +81,37 @@ public class Partner {
         return mResources;
     }
 
-    public boolean hasDefaultLayout() {
-        int defaultLayout = getResources().getIdentifier(Partner.RES_DEFAULT_LAYOUT,
-                "xml", getPackageName());
+    private int getLayoutResId(String layoutResName) {
+        return getResources().getIdentifier(layoutResName, "xml", getPackageName());
+    }
+
+    /*
+     * Get customized default layout resource name.
+     *
+     * If there is a resource for dedicate operator, use it, otherwise use default.
+     */
+    public String getDefaltLayoutName(Context ctx) {
+        final String mccmnc = Utilities.getMccMnc(ctx);
+        final String customResName;
+        if ("21403".equals(mccmnc)) {
+            customResName = RES_DEFAULT_LAYOUT_ORANGE_SPAIN;
+        } else {
+            // Default: No custom layout for current operator.
+            return RES_DEFAULT_LAYOUT;
+        }
+
+        if (getLayoutResId(customResName) == 0) {
+            Log.e(TAG, "Custom layout " + customResName + " for mccmnc=" + mccmnc
+                + " not found. Falling back to default.");
+            return RES_DEFAULT_LAYOUT;
+        }
+
+        Log.d(TAG, "getCustomDefaultLayout customResName=" + customResName);
+        return customResName;
+    }
+
+    public boolean hasDefaultLayout(Context ctx) {
+        int defaultLayout = getLayoutResId(getDefaltLayoutName(ctx));
         return defaultLayout != 0;
     }
 

@@ -51,6 +51,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.TransactionTooLargeException;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -690,5 +691,16 @@ public final class Utilities {
         public int getIntrinsicWidth() {
             return mSize;
         }
+    }
+
+    public static String getMccMnc(Context context) {
+        if (context == null) {
+            Log.e(TAG, "getMccMnc, failed to get operator because of null context.");
+            return "";
+        }
+
+        TelephonyManager tm =
+                (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm.getSimOperator();
     }
 }

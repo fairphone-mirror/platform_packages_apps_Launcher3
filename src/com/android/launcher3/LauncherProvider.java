@@ -537,9 +537,10 @@ public class LauncherProvider extends ContentProvider {
             }
             if (loader == null) {
                 final Partner partner = Partner.get(getContext().getPackageManager());
-                if (partner != null && partner.hasDefaultLayout()) {
+                if (partner != null && partner.hasDefaultLayout(getContext())) {
                     final Resources partnerRes = partner.getResources();
-                    int workspaceResId = partnerRes.getIdentifier(Partner.RES_DEFAULT_LAYOUT,
+                    int workspaceResId = partnerRes.getIdentifier(
+                            partner.getDefaltLayoutName(getContext()),
                             "xml", partner.getPackageName());
                     if (workspaceResId != 0) {
                         loader = new DefaultLayoutParser(getContext(), widgetHost,

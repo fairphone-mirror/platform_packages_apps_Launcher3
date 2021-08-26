@@ -581,6 +581,8 @@ public class FloatingIconView extends View implements
 
                     setIcon(originalView, mIconLoadResult.drawable, mIconLoadResult.badge,
                             mIconLoadResult.iconOffset);
+
+                    // Delay swapping views until the icon is loaded to prevent a flash.
                     setVisibility(VISIBLE);
                     hideOriginalView(originalView);
                 };

@@ -71,7 +71,7 @@ public final class TaskViewUtils {
         RecentsView recentsView = activity.getOverviewPanel();
         if (v instanceof TaskView) {
             TaskView taskView = (TaskView) v;
-            return (recentsView.isTaskViewVisible(taskView) && (taskView != null) && (taskView.getRecentsView() != null)) ? taskView : null;
+            return recentsView.isTaskViewVisible(taskView) ? taskView : null;
         }
 
         // It's possible that the launched view can still be resolved to a visible task view, check
@@ -83,7 +83,7 @@ public final class TaskViewUtils {
             if (componentName != null) {
                 for (int i = 0; i < recentsView.getTaskViewCount(); i++) {
                     TaskView taskView = recentsView.getTaskViewAt(i);
-                    if (recentsView.isTaskViewVisible(taskView) && (taskView != null) && (taskView.getRecentsView() != null)) {
+                    if (recentsView.isTaskViewVisible(taskView)) {
                         Task.TaskKey key = taskView.getTask().key;
                         if (componentName.equals(key.getComponent()) && userId == key.userId) {
                             return taskView;
@@ -113,7 +113,7 @@ public final class TaskViewUtils {
         // If the opening task id is not currently visible in overview, then fall back to normal app
         // icon launch animation
         TaskView taskView = recentsView.getTaskView(openingTaskId);
-        if (taskView == null || !recentsView.isTaskViewVisible(taskView) || taskView.getRecentsView() == null) {
+        if (taskView == null || !recentsView.isTaskViewVisible(taskView)) {
             return null;
         }
         return taskView;
@@ -138,7 +138,6 @@ public final class TaskViewUtils {
                     .setTargetSet(targets);
 
         final RecentsView recentsView = v.getRecentsView();
-        if (recentsView == null) return;
         int taskIndex = recentsView.indexOfChild(v);
         boolean parallaxCenterAndAdjacentTask = taskIndex != recentsView.getCurrentPage();
         int startScroll = recentsView.getScrollOffset(taskIndex);

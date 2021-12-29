@@ -404,6 +404,14 @@ public abstract class AbstractStateChangeTouchController
         }
 
         final LauncherState targetState;
+        if (mCurrentAnimation == null) {
+            mFromState = mStartState;
+            mToState = null;
+            cancelAnimationControllers();
+            reinitCurrentAnimation(false, mDetector.wasInitialTouchPositive());
+            mDisplacementShift = 0;
+            return;
+        }
         final float progress = mCurrentAnimation.getProgressFraction();
         final float progressVelocity = velocity * mProgressMultiplier;
         final float interpolatedProgress = mCurrentAnimation.getInterpolatedProgress();

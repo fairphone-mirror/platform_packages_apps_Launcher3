@@ -339,6 +339,11 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity>
             fling = false;
         }
         PagedOrientationHandler orientationHandler = mRecentsView.getPagedOrientationHandler();
+        if (mCurrentAnimation == null) {
+            reInitAnimationController(false);
+            mDisplacementShift = 0;
+            return;
+        }
         float progress = mCurrentAnimation.getProgressFraction();
         float interpolatedProgress = mCurrentAnimation.getInterpolatedProgress();
         if (fling) {

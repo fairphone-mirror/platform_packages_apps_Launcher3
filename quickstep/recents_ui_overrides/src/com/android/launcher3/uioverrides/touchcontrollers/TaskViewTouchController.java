@@ -276,8 +276,11 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity>
         } else {
             mFlingBlockCheck.onEvent();
         }
-        mCurrentAnimation.setPlayFraction(Utilities.boundToRange(
+
+        if (mCurrentAnimation != null) {
+            mCurrentAnimation.setPlayFraction(Utilities.boundToRange(
                 totalDisplacement * mProgressMultiplier, 0, 1));
+        }
 
         if (ENABLE_QUICKSTEP_LIVE_TILE.get()) {
             if (mRecentsView.getCurrentPage() != 0 || isGoingUp) {
@@ -297,6 +300,11 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity>
             fling = false;
         }
         PagedOrientationHandler orientationHandler = mRecentsView.getPagedOrientationHandler();
+        if (mCurrentAnimation == null) {
+            reInitAnimationController(false);
+            mDisplacementShift = 0;
+            return;
+        }
         float progress = mCurrentAnimation.getProgressFraction();
         float interpolatedProgress = mCurrentAnimation.getInterpolatedProgress();
         if (fling) {

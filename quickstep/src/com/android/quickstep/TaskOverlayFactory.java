@@ -64,6 +64,7 @@ import java.util.List;
  * Factory class to create and add an overlays on the TaskView
  */
 public class TaskOverlayFactory implements ResourceBasedOverride {
+    private static final String PHONE_MODEL = "FP4";
 
     public static List<SystemShortcut> getEnabledShortcuts(TaskView taskView,
             DeviceProfile deviceProfile, TaskIdAttributeContainer taskContainer) {
@@ -92,6 +93,13 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
         boolean isInLandscape = orientedState.getTouchRotation() != ROTATION_0;
 
         // Add overview actions to the menu when in in-place rotate landscape mode.
+        // On the fp4s project, the screenshot item is displayed regardless of the horizontal or vertical screen
+        String model = Build.MODEL;
+        int version = Build.VERSION.SDK_INT;
+        if (PHONE_MODEL.equals(model) && version > Build.VERSION_CODES.R) {
+            isInLandscape = true;
+        }
+
         if (!canLauncherRotate && isInLandscape) {
             // Add screenshot action to task menu.
             SystemShortcut screenshotShortcut = TaskShortcutFactory.SCREENSHOT

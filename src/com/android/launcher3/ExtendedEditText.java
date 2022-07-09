@@ -150,9 +150,10 @@ public class ExtendedEditText extends EditText {
         if (!TextUtils.isEmpty(getText())) {
             setText("");
         }
-        if (FeatureFlags.ENABLE_DEVICE_SEARCH.get()) {
-            return;
-        }
+        // if (FeatureFlags.ENABLE_DEVICE_SEARCH.get()) {
+        //     return;
+        // }
+
         if (isFocused()) {
             View nextFocus = focusSearch(View.FOCUS_DOWN);
             if (nextFocus != null) {

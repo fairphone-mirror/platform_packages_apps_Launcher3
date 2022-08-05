@@ -203,11 +203,12 @@ public class OverviewCommandHelper {
             public void onRecentsAnimationCanceled(ThumbnailData thumbnailData) {
                 interactionHandler.onGestureCancelled();
                 cmd.removeListener(this);
-
-                RecentsView createdRecents =
-                        activityInterface.getCreatedActivity().getOverviewPanel();
-                if (createdRecents != null) {
-                    createdRecents.onRecentsAnimationComplete();
+                if(activityInterface != null && activityInterface.getCreatedActivity() != null){
+                    RecentsView createdRecents =
+                            activityInterface.getCreatedActivity().getOverviewPanel();
+                    if (createdRecents != null) {
+                        createdRecents.onRecentsAnimationComplete();
+                    }
                 }
             }
         };

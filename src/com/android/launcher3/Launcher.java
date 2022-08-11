@@ -75,7 +75,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -276,9 +275,6 @@ public class Launcher extends StatefulActivity<LauncherState> implements Launche
     @Thunk @VisibleForTesting public static final int NEW_APPS_ANIMATION_DELAY = 500;
 
     private static final int THEME_CROSS_FADE_ANIMATION_DURATION = 375;
-    private static final String FIRST_BOOT_KEY = "persist.sys.firstboot";
-    private static final String MYFIREPHONE_INTENT = "android.settings.LAUNCH_MY_FAIRPHONE";
-    private static final String PREFERENCE_KEY ="isFirstToLauncher";
 
     private Configuration mOldConfig;
 
@@ -1108,20 +1104,8 @@ public class Launcher extends StatefulActivity<LauncherState> implements Launche
         } else {
             mOverlayManager.onActivityResumed(this);
         }
-        startMyFirePhone();
-        TraceHelper.INSTANCE.endSection(traceToken);
-    }
 
-    private void startMyFirePhone() {
-        String isFirstToLauncherSysProper = Utilities.getSystemProperty(FIRST_BOOT_KEY,"true");
-        SharedPreferences prefs = Utilities.getPrefs(this);
-        boolean isFirstToLauncherPref = prefs.getBoolean(PREFERENCE_KEY,true);
-        if ("true".equals(isFirstToLauncherSysProper) && isFirstToLauncherPref) {
-            Editor editor = prefs.edit();
-            editor.putBoolean(PREFERENCE_KEY, false);
-            editor.apply();
-            startActivity(new Intent(MYFIREPHONE_INTENT));
-        }
+        TraceHelper.INSTANCE.endSection(traceToken);
     }
 
     @Override

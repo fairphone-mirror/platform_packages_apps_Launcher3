@@ -21,6 +21,7 @@ import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_OVERV
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemProperties;
+import android.graphics.Color;
 
 import com.android.launcher3.BaseQuickstepLauncher;
 import com.android.launcher3.DeviceProfile;
@@ -106,7 +107,8 @@ public class OverviewState extends LauncherState {
 
     @Override
     public int getWorkspaceScrimColor(Launcher launcher) {
-        return Themes.getAttrColor(launcher, R.attr.overviewScrimColor);
+        //Modify by T2M yingyubin for FP4S-663 20221010
+        return Color.TRANSPARENT;//Themes.getAttrColor(launcher, R.attr.overviewScrimColor);
     }
 
     @Override

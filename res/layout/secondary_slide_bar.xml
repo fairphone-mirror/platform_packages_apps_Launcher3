@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_notification"
+        android:layout_width="270dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#55888888"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tv_notification_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_center_title"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/clear_all"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@null"
+            android:src="@drawable/ic_detele_all"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notification"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@id/status_bar_switch"
+            app:layout_constraintTop_toBottomOf="@id/tv_notification_center" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/status_bar_switch"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/bg_notification"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <RadioButton
+                android:id="@+id/wifi_switch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_radio_wifi"
+                android:button="@null"
+                app:layout_constraintEnd_toStartOf="@id/bluetooth_switch"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_wifi_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/wifi_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/wifi_switch"
+                app:layout_constraintStart_toStartOf="@id/wifi_switch"
+                app:layout_constraintTop_toBottomOf="@id/wifi_switch" />
+
+
+            <RadioButton
+                android:id="@+id/bluetooth_switch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_radio_bluetooth"
+                android:button="@null"
+                app:layout_constraintEnd_toStartOf="@id/cellular_switch"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/wifi_switch"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_bluetooth_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/bluetooth_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/bluetooth_switch"
+                app:layout_constraintStart_toStartOf="@id/bluetooth_switch"
+                app:layout_constraintTop_toBottomOf="@id/bluetooth_switch" />
+
+            <RadioButton
+                android:id="@+id/cellular_switch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_radio_cellular"
+                android:button="@null"
+                app:layout_constraintEnd_toStartOf="@id/sound_switch"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/bluetooth_switch"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_cellular_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/celluar_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/cellular_switch"
+                app:layout_constraintStart_toStartOf="@id/cellular_switch"
+                app:layout_constraintTop_toBottomOf="@id/cellular_switch" />
+
+            <RadioButton
+                android:id="@+id/sound_switch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_radio_sound"
+                android:button="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/cellular_switch"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_sound_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/sound_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/sound_switch"
+                app:layout_constraintStart_toStartOf="@id/sound_switch"
+                app:layout_constraintTop_toBottomOf="@id/sound_switch" />
+
+            <ImageButton
+                android:id="@+id/screen_shot"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="38dp"
+                android:src="@drawable/ic_screenshot_view"
+                app:layout_constraintStart_toStartOf="@id/wifi_switch"
+                app:layout_constraintTop_toBottomOf="@id/wifi_switch" />
+
+            <TextView
+                android:id="@+id/tv_screen_shot_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/screenshot_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/screen_shot"
+                app:layout_constraintStart_toStartOf="@id/screen_shot"
+                app:layout_constraintTop_toBottomOf="@id/screen_shot" />
+
+            <RadioButton
+                android:id="@+id/desktop_mode"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="38dp"
+                android:background="@drawable/ic_radio_desktop"
+                android:button="@null"
+                app:layout_constraintStart_toStartOf="@id/bluetooth_switch"
+                app:layout_constraintTop_toBottomOf="@id/wifi_switch" />
+
+            <TextView
+                android:id="@+id/tv_desktop_mode_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxWidth="55dp"
+                android:maxLines="2"
+                android:text="@string/desktop_mode_title"
+                android:textColor="@color/inactive_color"
+                android:gravity="center"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="@id/desktop_mode"
+                app:layout_constraintStart_toStartOf="@id/desktop_mode"
+                app:layout_constraintTop_toBottomOf="@id/desktop_mode" />
+
+            <SeekBar
+                android:id="@+id/volume_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                android:max="10"
+                android:progress="6"
+                android:progressDrawable="@drawable/ic_volume_progress"
+                android:thumb="@drawable/ic_sound_thumb"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

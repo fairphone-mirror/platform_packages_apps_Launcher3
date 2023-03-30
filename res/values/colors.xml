@@ -85,4 +85,11 @@
     <color name="all_apps_button_color_2">#00677E</color>
     <color name="all_apps_button_color_3">#5F757E</color>
     <color name="all_apps_button_color_4">#005A6E</color>
+
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <color name="active_color">#1678EF</color>
+    <color name="inactive_color">#AAAAAA</color>
+    <color name="secondary_task_bar_background">#88464746</color>
+    <color name="wallpaper_picker_translucent_gray">#66000000</color>
+    <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

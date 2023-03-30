@@ -41,6 +41,7 @@ import androidx.annotation.WorkerThread;
 
 import com.android.launcher3.util.PackageUserKey;
 import com.android.launcher3.util.SettingsCache;
+import com.android.launcher3.secondarydisplay.SecondaryNotificationsChangeListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +87,7 @@ public class NotificationListener extends NotificationListenerService {
 
     private SettingsCache mSettingsCache;
     private SettingsCache.OnChangeListener mNotificationSettingsChangedListener;
+    private static SecondaryNotificationsChangeListener sSecondaryNotificationsChangeListener;
 
     public NotificationListener() {
         mWorkerHandler = new Handler(MODEL_EXECUTOR.getLooper(), this::handleWorkerMessage);
@@ -119,6 +121,28 @@ public class NotificationListener extends NotificationListenerService {
             sNotificationsChangedListeners.remove(listener);
         }
     }
+
+    //ADD by T2M yingyubin for Desktop mode
+    public static void setSecondaryNotificationsChangeListener(SecondaryNotificationsChangeListener listener) {
+        sSecondaryNotificationsChangeListener = listener;
+
+        NotificationListener notificationListener = getInstanceIfConnected();
+        if (notificationListener != null) {
+            notificationListener.onNotificationFullRefresh();
+        }
+    }
+
+    public static void removeSecondaryNotificationsChangeListener() {
+        sSecondaryNotificationsChangeListener = null;
+    }
+
+    public static void refreshFullNotification() {
+        NotificationListener notificationListener = getInstanceIfConnected();
+        if (notificationListener != null) {
+            notificationListener.onNotificationFullRefresh();
+        }
+    }
+    //ADD by T2M yingyubin for Desktop mode
 
     private boolean handleWorkerMessage(Message message) {
         switch (message.what) {
@@ -204,6 +228,11 @@ public class NotificationListener extends NotificationListenerService {
                         listener.onNotificationFullRefresh(
                                 (List<StatusBarNotification>) message.obj);
                     }
+                    //ADD by T2M yingyubin for Desktop mode
+                    if(sSecondaryNotificationsChangeListener != null){
+                        sSecondaryNotificationsChangeListener.onNotificationFullRefresh((List<StatusBarNotification>) message.obj);
+                    }
+                    //ADD by T2M yingyubin for Desktop mode
                 }
                 break;
         }
@@ -257,6 +286,11 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationPosted(final StatusBarNotification sbn) {
         if (sbn != null) {
             mWorkerHandler.obtainMessage(MSG_NOTIFICATION_POSTED, sbn).sendToTarget();
+            //ADD by T2M yingyubin for Desktop mode
+            if(sSecondaryNotificationsChangeListener != null){
+                sSecondaryNotificationsChangeListener.onNotificationPosted(sbn);
+            }
+            //ADD by T2M yingyubin for Desktop mode
         }
     }
 
@@ -264,6 +298,11 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(final StatusBarNotification sbn) {
         if (sbn != null) {
             mWorkerHandler.obtainMessage(MSG_NOTIFICATION_REMOVED, sbn).sendToTarget();
+            //ADD by T2M yingyubin for Desktop mode
+            if(sSecondaryNotificationsChangeListener != null){
+                sSecondaryNotificationsChangeListener.onNotificationRemoved(sbn);
+            }
+            //ADD by T2M yingyubin for Desktop mode
         }
     }
 

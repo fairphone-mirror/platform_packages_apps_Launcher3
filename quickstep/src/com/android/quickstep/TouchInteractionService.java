@@ -80,6 +80,7 @@ import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.OnboardingPrefs;
 import com.android.launcher3.util.TraceHelper;
 import com.android.launcher3.util.WindowBounds;
+import com.android.launcher3.secondarydisplay.SecondarySystemUIProxy;
 import com.android.quickstep.inputconsumers.AccessibilityInputConsumer;
 import com.android.quickstep.inputconsumers.AssistantInputConsumer;
 import com.android.quickstep.inputconsumers.DeviceLockedInputConsumer;
@@ -173,6 +174,11 @@ public class TouchInteractionService extends Service
                 SystemUiProxy.INSTANCE.get(TouchInteractionService.this).setProxy(proxy, pip,
                         splitscreen, onehanded, shellTransitions, startingWindow, recentTasks,
                         launcherUnlockAnimationController, backAnimation);
+                //ADD by T2M yingyubin for Desktop mode
+                SecondarySystemUIProxy.INSTANCE.get(TouchInteractionService.this).setProxy(proxy, pip,
+                        splitscreen, onehanded, shellTransitions, startingWindow, recentTasks,
+                        launcherUnlockAnimationController, backAnimation);
+                //ADD by T2M yingyubin for Desktop mode
                 TouchInteractionService.this.initInputMonitor("TISBinder#onInitialize()");
                 preloadOverview(true /* fromInit */);
             });
@@ -555,6 +561,9 @@ public class TouchInteractionService extends Service
         disposeEventHandlers("TouchInteractionService onDestroy()");
         mDeviceState.destroy();
         SystemUiProxy.INSTANCE.get(this).clearProxy();
+        //ADD by T2M yingyubin for Desktop mode
+        SecondarySystemUIProxy.INSTANCE.get(this).clearProxy();
+        //ADD by T2M yingyubin for Desktop mode
         ProtoTracer.INSTANCE.get(this).stop();
         ProtoTracer.INSTANCE.get(this).remove(this);
 

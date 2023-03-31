@@ -6,8 +6,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 
-import static com.android.systemui.shared.system.WindowManagerWrapper.ITYPE_BOTTOM_TAPPABLE_ELEMENT;
-import static com.android.systemui.shared.system.WindowManagerWrapper.ITYPE_EXTRA_NAVIGATION_BAR;
+import static android.view.InsetsState.ITYPE_BOTTOM_TAPPABLE_ELEMENT;
+import static android.view.InsetsState.ITYPE_EXTRA_NAVIGATION_BAR;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static android.view.Display.INVALID_DISPLAY;
 import static com.android.launcher3.secondarydisplay.OverlayShortcut.APP_INFO;
@@ -84,7 +84,7 @@ import com.android.launcher3.allapps.AllAppsStore;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.AbstractFloatingView;
-import com.android.systemui.shared.system.WindowManagerWrapper;
+//import com.android.systemui.shared.system.WindowManagerWrapper;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import android.content.pm.LauncherActivityInfo;
 import android.net.ConnectivityManager;
@@ -232,11 +232,11 @@ public class SecondaryTaskBarView extends BaseOverlayView implements OnSharedPre
         mWindowLayoutParams.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
         mWindowLayoutParams.setSystemApplicationOverlay(true);
 
-        WindowManagerWrapper wmWrapper = WindowManagerWrapper.getInstance();
-        wmWrapper.setProvidesInsetsTypes(
-                mWindowLayoutParams,
-                new int[] { ITYPE_BOTTOM_TAPPABLE_ELEMENT }
-        );
+        // WindowManagerWrapper wmWrapper = WindowManagerWrapper.getInstance();
+        // wmWrapper.setProvidesInsetsTypes(
+        //         mWindowLayoutParams,
+        //         new int[] { ITYPE_BOTTOM_TAPPABLE_ELEMENT }
+        // );
 
         setShow(true);
         mWindowManager.addView(mLayout, mWindowLayoutParams);
@@ -371,7 +371,7 @@ public class SecondaryTaskBarView extends BaseOverlayView implements OnSharedPre
         icon.setOnClickListener(view->{
             int taskId = -1;
             int displayId = mLauncher.getBaseContext().getDisplay().getDisplayId();
-            for(ActivityManager.RecentTaskInfo taskInfo : mLauncher.getSecondaryRecentsListener().getRecentsList()){
+            for(ActivityManager.RunningTaskInfo taskInfo : mLauncher.getSecondaryRecentsListener().getRecentsList()){
                 if(displayId == taskInfo.displayId && taskInfo.baseActivity !=null
                         && taskInfo.baseActivity.equals(info.getTargetComponent())){
                     taskId = taskInfo.taskId;

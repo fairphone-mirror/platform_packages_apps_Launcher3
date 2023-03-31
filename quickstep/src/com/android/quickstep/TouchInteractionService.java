@@ -195,8 +195,8 @@ public class TouchInteractionService extends Service
                         recentTasks, launcherUnlockAnimationController, backAnimation, desktopMode);
                 //ADD by T2M yingyubin for Desktop mode
                 SecondarySystemUIProxy.INSTANCE.get(TouchInteractionService.this).setProxy(proxy, pip,
-                        splitscreen, onehanded, shellTransitions, startingWindow, recentTasks,
-                        launcherUnlockAnimationController, backAnimation);
+                        splitscreen, floatingTasks, onehanded, shellTransitions, startingWindow,
+                        recentTasks, launcherUnlockAnimationController, backAnimation, desktopMode);
                 //ADD by T2M yingyubin for Desktop mode
                 TouchInteractionService.this.initInputMonitor("TISBinder#onInitialize()");
                 preloadOverview(true /* fromInit */);

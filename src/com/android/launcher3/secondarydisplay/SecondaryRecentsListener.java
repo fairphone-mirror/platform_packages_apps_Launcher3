@@ -21,6 +21,7 @@ import com.android.systemui.shared.system.TaskStackChangeListeners;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
     private final LooperExecutor mMainThreadExecutor;
     private final ActivityManagerWrapper mActivityManagerWrapper;
     private ArrayList<LauncherActivityInfo> recentsList = new ArrayList();
-    private List<ActivityManager.RecentTaskInfo> mRawList = new ArrayList();
+    private List<ActivityManager.RunningTaskInfo> mRawList = new ArrayList();
     private LauncherApps mLauncherApps;
     private int mDisplayId;
     private Consumer<ArrayList<LauncherActivityInfo>> mCallback;
@@ -72,10 +73,10 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         recentsList.clear();
         mRawList.clear();
         int currentUserId = Process.myUserHandle().getIdentifier();
-        List<ActivityManager.RecentTaskInfo> rawTasks =
-            mActivityManagerWrapper.getRecentTasks(numTasks, currentUserId);
-        mRawList.addAll(rawTasks);
-        for(ActivityManager.RecentTaskInfo taskInfo :rawTasks){
+        ActivityManager.RunningTaskInfo[] rawTasks = 
+                mActivityManagerWrapper.getRunningTasks(true);
+        mRawList.addAll(Arrays.asList(rawTasks));
+        for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
             if(taskInfo.baseActivity != null){
                 String packageName = taskInfo.baseActivity.getPackageName();
                 if("com.fp.camera".equals(packageName)){
@@ -102,7 +103,7 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         });
     }
 
-    public List<ActivityManager.RecentTaskInfo> getRecentsList(){
+    public List<ActivityManager.RunningTaskInfo> getRecentsList(){
         return mRawList;
     }
 
@@ -110,9 +111,9 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         UI_HELPER_EXECUTOR.execute(() -> {
             List<SecondaryRecentBean> taskList = new ArrayList<>();
             int currentUserId = Process.myUserHandle().getIdentifier();
-            List<ActivityManager.RecentTaskInfo> rawTasks = 
-                    mActivityManagerWrapper.getRecentTasks(RECENT_SIZE, currentUserId);
-            for(ActivityManager.RecentTaskInfo taskInfo :rawTasks){
+            ActivityManager.RunningTaskInfo[] rawTasks = 
+                    mActivityManagerWrapper.getRunningTasks(true);
+            for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
                 if(taskInfo.baseActivity != null){
                     String packageName = taskInfo.baseActivity.getPackageName();
                     if("com.fp.camera".equals(packageName)){

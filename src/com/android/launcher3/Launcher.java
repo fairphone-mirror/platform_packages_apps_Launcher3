@@ -232,6 +232,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import android.os.SystemProperties;
+import android.provider.Settings;
+
+
 /**
  * Default launcher application.
  */
@@ -542,6 +546,16 @@ public class Launcher extends StatefulActivity<LauncherState>
             getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         }
         setTitle(R.string.home_screen);
+
+        try {
+            if ("1".equals(SystemProperties.get("persist.sys.is_first_boot"))) {
+                Settings.Global.putStringForUser(getContentResolver(),
+                        Settings.Global.SET_BATTERY_CHARGING_MODE, "yes",
+                        UserHandle.myUserId());
+            }
+        }catch (Exception e){
+            Log.i("sth__","    Exception :" + e);
+        }
     }
 
     protected LauncherOverlayManager getDefaultOverlay() {

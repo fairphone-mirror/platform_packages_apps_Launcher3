@@ -53,9 +53,11 @@ public class RemoteAnimationTargets {
 
                 hasRecents |= target.windowConfiguration.getActivityType() == ACTIVITY_TYPE_RECENTS;
             }
+            this.unfilteredApps = apps;
+        } else {
+            this.unfilteredApps = new RemoteAnimationTarget[0];
         }
 
-        this.unfilteredApps = apps;
         this.apps = filteredApps.toArray(new RemoteAnimationTarget[filteredApps.size()]);
         this.wallpapers = wallpapers;
         this.targetMode = targetMode;

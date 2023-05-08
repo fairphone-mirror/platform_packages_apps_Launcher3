@@ -53,9 +53,9 @@ public class RotationHelper implements OnSharedPreferenceChangeListener,
     public static boolean getAllowRotationDefaultValue(DeviceProfile deviceProfile) {
         // If the device's pixel density was scaled (usually via settings for A11y), use the
         // original dimensions to determine if rotation is allowed of not.
-        float originalSmallestWidth = dpiFromPx(
-                Math.min(deviceProfile.widthPx, deviceProfile.heightPx), DENSITY_DEVICE_STABLE);
-        return originalSmallestWidth >= MIN_TABLET_WIDTH;
+        //float originalSmallestWidth = dpiFromPx(
+                //Math.min(deviceProfile.widthPx, deviceProfile.heightPx), DENSITY_DEVICE_STABLE);
+        return false;//originalSmallestWidth >= MIN_TABLET_WIDTH;
     }
 
     public static final int REQUEST_NONE = 0;

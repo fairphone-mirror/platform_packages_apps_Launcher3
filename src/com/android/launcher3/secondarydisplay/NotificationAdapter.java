@@ -45,8 +45,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if(icon != null){
                 notificationViewHolder.mIcon.setImageDrawable(icon.loadDrawable(mContext));
             }
-            notificationViewHolder.mTitle.setText(title.toString());
-            notificationViewHolder.mText.setText(text.toString());
+            if(title != null) {
+                notificationViewHolder.mTitle.setText(title.toString());
+            }
+            if(text != null) {
+                notificationViewHolder.mText.setText(text.toString());
+            }
             notificationViewHolder.itemView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){

@@ -62,6 +62,8 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.function.Consumer;
+import android.graphics.Insets;
+import android.view.InsetsFrameProvider;
 
 import android.provider.Settings;
 import com.android.launcher3.R;
@@ -84,7 +86,6 @@ import com.android.launcher3.allapps.AllAppsStore;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.AbstractFloatingView;
-//import com.android.systemui.shared.system.WindowManagerWrapper;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import android.content.pm.LauncherActivityInfo;
 import android.net.ConnectivityManager;
@@ -232,11 +233,12 @@ public class SecondaryTaskBarView extends BaseOverlayView implements OnSharedPre
         mWindowLayoutParams.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
         mWindowLayoutParams.setSystemApplicationOverlay(true);
 
-        // WindowManagerWrapper wmWrapper = WindowManagerWrapper.getInstance();
-        // wmWrapper.setProvidesInsetsTypes(
-        //         mWindowLayoutParams,
-        //         new int[] { ITYPE_BOTTOM_TAPPABLE_ELEMENT }
-        // );
+        mWindowLayoutParams.providedInsets = new InsetsFrameProvider[] {
+            new InsetsFrameProvider(ITYPE_BOTTOM_TAPPABLE_ELEMENT)
+        };
+        for (InsetsFrameProvider provider : mWindowLayoutParams.providedInsets) {
+            provider.insetsSize = Insets.of(0, 0, 0, height);
+        }
 
         setShow(true);
         mWindowManager.addView(mLayout, mWindowLayoutParams);

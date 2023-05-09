@@ -598,7 +598,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         try {
             if ("1".equals(SystemProperties.get("persist.sys.is_first_boot"))) {
                 Settings.Global.putStringForUser(getContentResolver(),
-                        Settings.Global.SET_BATTERY_CHARGING_MODE, "yes",
+                        Settings.Global.SET_BATTERY_CHARGING_MODE, "isBoot",
                         UserHandle.myUserId());
             }
         }catch (Exception e){

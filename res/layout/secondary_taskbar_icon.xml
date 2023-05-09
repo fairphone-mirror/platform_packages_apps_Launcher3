@@ -11,7 +11,7 @@
     <com.android.launcher3.BubbleTextView
         android:id="@+id/icon"
         style="@style/BaseIcon.Workspace"
-        launcher:iconDisplay="all_apps" />
+        launcher:iconDisplay="search_result_tall" />
 
     <ImageView
         android:id="@+id/pinned_icon"

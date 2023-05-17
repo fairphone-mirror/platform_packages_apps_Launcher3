@@ -17,7 +17,7 @@
 
 <profiles xmlns:launcher="http://schemas.android.com/apk/res-auto" >
 
-<!--    <grid-option
+<grid-option
         launcher:name="3_by_3"
         launcher:numRows="3"
         launcher:numColumns="3"
@@ -112,7 +112,7 @@
             launcher:allAppsCellHeight="104"
             launcher:canBeDefault="true" />
 
-    </grid-option>-->
+    </grid-option>
 
     <grid-option
         launcher:name="5_by_5"

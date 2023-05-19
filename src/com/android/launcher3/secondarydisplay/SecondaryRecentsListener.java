@@ -79,7 +79,7 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
             if(taskInfo.baseActivity != null){
                 String packageName = taskInfo.baseActivity.getPackageName();
-                if("com.fp.camera".equals(packageName)){
+                if("com.fp5.camera".equals(packageName)){
                     continue;
                 }
                 List<LauncherActivityInfo> appList = mLauncherApps.getActivityList(packageName,Process.myUserHandle());
@@ -116,7 +116,7 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
             for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
                 if(taskInfo.baseActivity != null){
                     String packageName = taskInfo.baseActivity.getPackageName();
-                    if("com.fp.camera".equals(packageName)){
+                    if("com.fp5.camera".equals(packageName)){
                         continue;
                     }
                     List<LauncherActivityInfo> appList = mLauncherApps.getActivityList(packageName,Process.myUserHandle());

@@ -95,7 +95,7 @@ public class SecondaryAllAppsAdapter extends RecyclerView.Adapter<RecyclerView.V
         Iterator<AppInfo> iterator = appList.iterator();
         while(iterator.hasNext()){
             AppInfo info = iterator.next();
-            if("com.fp.camera".equals(info.getTargetComponent().getPackageName())){
+            if("com.fp5.camera".equals(info.getTargetComponent().getPackageName())){
                 iterator.remove();
                 break;
             }

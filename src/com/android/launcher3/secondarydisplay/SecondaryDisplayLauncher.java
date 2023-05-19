@@ -257,7 +257,9 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        if(mSharedPreferences != null){
+            mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        }
         OverlayManager.getInstance().release();
         if(mCalendarView != null){
             mCalendarView.onDestroy();

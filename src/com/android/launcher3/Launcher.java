@@ -114,6 +114,7 @@ import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -132,8 +133,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.Trace;
 import android.os.UserHandle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
@@ -311,6 +315,11 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     public static final String INTENT_ACTION_ALL_APPS_TOGGLE =
             "launcher.intent_action_all_apps_toggle";
+
+    private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
+    private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.compose.activity.FairphoneOnboardingActivity";
+    private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
+    private static final String IS_DT_CARRIER = "persist.sys.isdtcarrier";
 
     private static boolean sIsNewProcess = true;
 
@@ -2138,6 +2147,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                 break;
             case MotionEvent.ACTION_UP:
                 mLastTouchUpTime = SystemClock.uptimeMillis();
+                startMyFairphone();
                 // Follow through
             case MotionEvent.ACTION_CANCEL:
                 mTouchInProgress = false;
@@ -2145,6 +2155,29 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
         TestLogging.recordMotionEvent(TestProtocol.SEQUENCE_MAIN, "Touch event", ev);
         return super.dispatchTouchEvent(ev);
+    }
+
+    private void startMyFairphone(){
+        if (isMyPhoneFirstOpen() && isDtCarrier()) {
+            setMyPhoneOpened();
+            Intent launchIntent = new Intent(Intent.ACTION_MAIN);
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
+            launchIntent.setComponent(cn);
+            startActivity(launchIntent);
+        }
+    }
+
+    private boolean isDtCarrier() {
+        return !"0".equals(SystemProperties.get(IS_DT_CARRIER,"0"));
+    }
+
+    private boolean isMyPhoneFirstOpen() {
+        return "0".equals(SystemProperties.get(MY_FAIRPHONE_IS_OPENED,"0")) && Settings.System.getInt(getContentResolver(), Settings.System.IS_FAIRPHONE_FIRST_OPEN, 0) == 0;
+    }
+
+    private void setMyPhoneOpened() {
+        Settings.System.putInt(getContentResolver(), Settings.System.IS_FAIRPHONE_FIRST_OPEN, 1);
     }
 
     @Override

@@ -55,7 +55,7 @@
             android:usesPermissionFlags="neverForLocation" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
             android:usesPermissionFlags="neverForLocation" />
-    <!-- <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" /> -->
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <!--ADD by T2M yingyubin for Desktop mode-->
     
     <!--

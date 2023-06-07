@@ -243,7 +243,7 @@ public class SecondarySlideBarView extends BaseOverlayView {
         mWindowLayoutParams.windowAnimations = R.style.slidebar_anim;
         mWindowLayoutParams.setFitInsetsTypes(0);
         mWindowLayoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
-        //mWindowLayoutParams.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+        mWindowLayoutParams.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
         mWindowLayoutParams.setSystemApplicationOverlay(true);
 
         setShow(true);

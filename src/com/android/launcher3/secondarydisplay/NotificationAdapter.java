@@ -22,6 +22,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<StatusBarNotification> notificationList = new ArrayList<>();
     private Context mContext;
     private NotificationCallback mNotificationCallback;
+    private long addNotifyTime = -1L;
 
     public NotificationAdapter(Context context){
         mContext =context;
@@ -90,9 +91,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             }
         }
-        if(!isExisted){
-            notificationList.add(0, sbn);
-            notifyItemInserted(0);
+        Notification notification = sbn.getNotification();
+        if(!isExisted) {
+            if("phone_missed_call".equals(notification.getChannelId())){
+                if(System.currentTimeMillis() - addNotifyTime > 100){
+                    notificationList.add(0, sbn);
+                    notifyItemInserted(0);
+                    addNotifyTime = System.currentTimeMillis();
+                }
+            }else {
+                notificationList.add(0, sbn);
+                notifyItemInserted(0);
+            }
         }
     }
 

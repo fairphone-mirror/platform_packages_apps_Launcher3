@@ -104,7 +104,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             }
         }
-        if(index > 0){
+        if(index >= 0){
             notificationList.remove(index);
             notifyItemRemoved(index);
         }

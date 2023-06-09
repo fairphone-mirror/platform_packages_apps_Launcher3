@@ -20,6 +20,7 @@ import static com.android.launcher3.secondarydisplay.wallpaper.SecondaryWallpape
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.Utilities.dpToPx;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -42,6 +43,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.provider.Settings;
 
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.BaseDraggingActivity;
@@ -351,7 +353,9 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
         if(mRecentsView.isShow()){
             mRecentsView.dissmiss();
         }
-        navigateHome();
+        if(isDesktopModeOn()){
+            navigateHome();
+        }
     }
 
     @Override
@@ -364,6 +368,12 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
             }
             mCalendarView.show();
         }
+    }
+
+    private boolean isDesktopModeOn(){
+        boolean desktopOn = Settings.Global.getInt(getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1;
+        return desktopOn;
     }
 
     private void navigateHome() {

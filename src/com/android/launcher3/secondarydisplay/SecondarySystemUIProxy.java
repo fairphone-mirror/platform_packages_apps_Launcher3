@@ -861,8 +861,7 @@ public class SecondarySystemUIProxy implements ISystemUiProxy {
      * Gets the set of running tasks.
      */
     public ArrayList<ActivityManager.RunningTaskInfo> getRunningTasks(int numTasks) {
-        if (mRecentTasks != null
-                && mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC)) {
+        if (mRecentTasks != null) {
             try {
                 return new ArrayList<>(Arrays.asList(mRecentTasks.getRunningTasks(numTasks)));
             } catch (RemoteException e) {

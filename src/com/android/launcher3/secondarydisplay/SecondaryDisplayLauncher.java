@@ -214,7 +214,8 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
         onSharedPreferenceChanged(mSharedPreferences, SECONDARY_WALLPAPER);
         mLauncherApps = getSystemService(LauncherApps.class);
         int displayId = getDisplay().getDisplayId();
-        mRecentsListener = new SecondaryRecentsListener(MAIN_EXECUTOR, ActivityManagerWrapper.getInstance(), mLauncherApps, displayId);
+        mRecentsListener = new SecondaryRecentsListener(MAIN_EXECUTOR, ActivityManagerWrapper.getInstance(),
+                mLauncherApps, displayId, SecondarySystemUIProxy.INSTANCE.get(this));
         mTaskBarView = new SecondaryTaskBarView(this, mAppsView.getAppsStore(), this);
         mTaskBarView.show();
         mSlideBar = new SecondarySlideBarView(this);

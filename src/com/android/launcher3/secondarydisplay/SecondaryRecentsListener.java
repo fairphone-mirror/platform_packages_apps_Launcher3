@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.os.Build;
 import android.os.Process;
+import android.os.RemoteException;
 import android.util.Log;
 import android.content.pm.LauncherApps;
 import android.util.SparseBooleanArray;
@@ -18,6 +19,7 @@ import com.android.systemui.shared.recents.model.ThumbnailData;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.shared.system.TaskStackChangeListener;
 import com.android.systemui.shared.system.TaskStackChangeListeners;
+import com.android.wm.shell.recents.IRecentTasksListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +30,7 @@ import java.util.HashSet;
 import java.util.function.Consumer;
 
 @TargetApi(Build.VERSION_CODES.R)
-public class SecondaryRecentsListener implements TaskStackChangeListener {
+public class SecondaryRecentsListener {
 
     private final LooperExecutor mMainThreadExecutor;
     private final ActivityManagerWrapper mActivityManagerWrapper;
@@ -38,31 +40,50 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
     private int mDisplayId;
     private Consumer<ArrayList<LauncherActivityInfo>> mCallback;
     private final int RECENT_SIZE = 8;
+    private final SecondarySystemUIProxy mSysUiProxy;
 
     public SecondaryRecentsListener(LooperExecutor mainThreadExecutor,
             ActivityManagerWrapper activityManagerWrapper,
             LauncherApps launcherApps,
-            int displayId) {
+            int displayId,
+            SecondarySystemUIProxy sysUiProxy) {
         mMainThreadExecutor = mainThreadExecutor;
         mActivityManagerWrapper = activityManagerWrapper;
         mLauncherApps = launcherApps;
         mDisplayId = displayId;
-        TaskStackChangeListeners.getInstance().registerTaskStackListener(this);
+        mSysUiProxy = sysUiProxy;
+        mSysUiProxy.registerRecentTasksListener(mRecentTaskListener);
     }
 
-    @Override
-    public void onTaskStackChanged() {
+    private final IRecentTasksListener.Stub mRecentTaskListener = new IRecentTasksListener.Stub() {
+        @Override
+        public void onRecentTasksChanged() throws RemoteException {
+            mMainThreadExecutor.execute(SecondaryRecentsListener.this::onRecentTasksChanged);
+        }
+
+        @Override
+        public void onRunningTaskAppeared(ActivityManager.RunningTaskInfo taskInfo) {
+            mMainThreadExecutor.execute(() -> {
+                SecondaryRecentsListener.this.onRunningTaskAppeared(taskInfo);
+            });
+        }
+
+        @Override
+        public void onRunningTaskVanished(ActivityManager.RunningTaskInfo taskInfo) {
+            mMainThreadExecutor.execute(() -> {
+                SecondaryRecentsListener.this.onRunningTaskVanished(taskInfo);
+            });
+        }
+    };
+
+    private void onRecentTasksChanged() {
         getTaskKeys(RECENT_SIZE);
     }
 
-    @Override
-    public void onRecentTaskListUpdated() {
-        //getTaskKeys(RECENT_SIZE);
+    private void onRunningTaskAppeared(ActivityManager.RunningTaskInfo taskInfo) {
     }
 
-    @Override
-    public void onTaskRemoved(int taskId) {
-
+    private void onRunningTaskVanished(ActivityManager.RunningTaskInfo taskInfo) {
     }
 
     public void setTaskInfoListCallback(Consumer<ArrayList<LauncherActivityInfo>> callback){
@@ -73,10 +94,9 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         recentsList.clear();
         mRawList.clear();
         int currentUserId = Process.myUserHandle().getIdentifier();
-        ActivityManager.RunningTaskInfo[] rawTasks = 
-                mActivityManagerWrapper.getRunningTasks(true);
-        mRawList.addAll(Arrays.asList(rawTasks));
-        for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
+        ArrayList<ActivityManager.RunningTaskInfo> runningList = mSysUiProxy.getRunningTasks(numTasks);
+        mRawList.addAll(runningList);
+        for(ActivityManager.RunningTaskInfo taskInfo : runningList){
             if(taskInfo.baseActivity != null){
                 String packageName = taskInfo.baseActivity.getPackageName();
                 if("com.fp5.camera".equals(packageName)){
@@ -111,9 +131,8 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
         UI_HELPER_EXECUTOR.execute(() -> {
             List<SecondaryRecentBean> taskList = new ArrayList<>();
             int currentUserId = Process.myUserHandle().getIdentifier();
-            ActivityManager.RunningTaskInfo[] rawTasks = 
-                    mActivityManagerWrapper.getRunningTasks(true);
-            for(ActivityManager.RunningTaskInfo taskInfo :rawTasks){
+            ArrayList<ActivityManager.RunningTaskInfo> runningList = mSysUiProxy.getRunningTasks(Integer.MAX_VALUE);
+            for(ActivityManager.RunningTaskInfo taskInfo : runningList){
                 if(taskInfo.baseActivity != null){
                     String packageName = taskInfo.baseActivity.getPackageName();
                     if("com.fp5.camera".equals(packageName)){
@@ -143,6 +162,6 @@ public class SecondaryRecentsListener implements TaskStackChangeListener {
     }
 
     public void onDestory(){
-        TaskStackChangeListeners.getInstance().unregisterTaskStackListener(this);
+        mSysUiProxy.unregisterRecentTasksListener(mRecentTaskListener);
     }
 }

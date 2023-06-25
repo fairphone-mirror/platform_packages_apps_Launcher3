@@ -173,4 +173,19 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Busca en tu teléfono"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Busca en tu tablet"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Se ha producido un error: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
+    <string name="notification_center_title">Centro de notificaciones</string>
+    <string name="add_to_taskbar_label">Añadir a la barra de tareas</string>
+    <string name="remove_from_taskbar_lable">Eliminar de la barra de tareas</string>
+    <string name="sort_desktop_icon">Ordenar iconos por nombre</string>
+    <string name="arrange_icon">Mover icono</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Datos móviles</string>
+    <string name="sound_title">Sonido</string>
+    <string name="screenshot_title">Captura de pantalla</string>
+    <string name="desktop_mode_title">Modo escritorio</string>
+    <string name="recents_empty_message">No hay nada reciente</string>
+    <string name="clear_all">Borrar todo</string>
+    <string name="calendar_more">Más</string>
+    <string name="set_wallpaper">Establecer fondo de pantalla</string>
 </resources>

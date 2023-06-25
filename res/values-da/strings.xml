@@ -173,4 +173,19 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Søg på din telefon"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Søg på din tablet"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Mislykket: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
+    <string name="notification_center_title">Notifikationscenter</string>
+    <string name="add_to_taskbar_label">Tilføj til proceslinjen</string>
+    <string name="remove_from_taskbar_lable">Fjern fra proceslinjen</string>
+    <string name="sort_desktop_icon">Sortér ikoner efter navn</string>
+    <string name="arrange_icon">Flyt ikon</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobildata</string>
+    <string name="sound_title">Lyd</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="desktop_mode_title">Desktop-tilstand</string>
+    <string name="recents_empty_message">Ingen nye elementer</string>
+    <string name="clear_all">Ryd alt</string>
+    <string name="calendar_more">Mere</string>
+    <string name="set_wallpaper">Angiv baggrund</string>
 </resources>

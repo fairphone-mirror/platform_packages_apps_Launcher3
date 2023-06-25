@@ -173,4 +173,19 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Zoeken op je telefoon"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Zoeken op je tablet"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Mislukt: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
+    <string name="notification_center_title">Berichtencentrum</string>
+    <string name="add_to_taskbar_label">Toevoegen aan taakbalk</string>
+    <string name="remove_from_taskbar_lable">Verwijderen van taakbalk</string>
+    <string name="sort_desktop_icon">Icoontjes sorteren op naam</string>
+    <string name="arrange_icon">Icoon verplaatsen</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobiele data</string>
+    <string name="sound_title">Geluid</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="desktop_mode_title">Desktopmodus</string>
+    <string name="recents_empty_message">Geen recente items</string>
+    <string name="clear_all">Alles wissen</string>
+    <string name="calendar_more">Meer</string>
+    <string name="set_wallpaper">Achtergrond instellen</string>
 </resources>

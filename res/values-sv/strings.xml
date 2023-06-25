@@ -174,4 +174,19 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Sök på telefonen"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Sök på surfplattan"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Misslyckades: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
+    <string name="notification_center_title">Anmälningscentrum</string>
+    <string name="add_to_taskbar_label">Lägg till i aktivitetsfältet</string>
+    <string name="remove_from_taskbar_lable">Ta bort från aktivitetsfältet</string>
+    <string name="sort_desktop_icon">Sortera ikoner efter namn</string>
+    <string name="arrange_icon">Flytta ikon</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobildata</string>
+    <string name="sound_title">Ljud</string>
+    <string name="screenshot_title">Skärmbild</string>
+    <string name="desktop_mode_title">Skrivbordsläge</string>
+    <string name="recents_empty_message">Listan med de senaste åtgärderna är tom</string>
+    <string name="clear_all">Rensa alla</string>
+    <string name="calendar_more">Mer</string>
+    <string name="set_wallpaper">Använd som bakgrund</string>
 </resources>

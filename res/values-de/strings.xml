@@ -174,4 +174,19 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Auf dem Smartphone suchen"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Auf dem Tablet suchen"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Fehler: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
+    <string name="notification_center_title">Benachrichtigungszentrum</string>
+    <string name="add_to_taskbar_label">Zur Taskleiste hinzufügen</string>
+    <string name="remove_from_taskbar_lable">Von der Taskleiste entfernen</string>
+    <string name="sort_desktop_icon">Icons nach Namen sortieren</string>
+    <string name="arrange_icon">Symbol verschieben</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobile Daten</string>
+    <string name="sound_title">Ton</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="desktop_mode_title">Desktopmodus</string>
+    <string name="recents_empty_message">Keine kürzlich verwendeten Elemente</string>
+    <string name="clear_all">Alle Apps schließen</string>
+    <string name="calendar_more">Mehr</string>
+    <string name="set_wallpaper">Als Hintergrund festlegen</string>
 </resources>

@@ -461,5 +461,6 @@
     <string name="clear_all">Clear All</string>
     <string name="calendar_more">More</string>
     <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="desktop_mode_off_info">Changes take effect when is reconnected</string>
     <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

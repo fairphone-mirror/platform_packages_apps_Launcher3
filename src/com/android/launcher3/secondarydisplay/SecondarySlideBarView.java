@@ -64,6 +64,7 @@ import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -345,6 +346,9 @@ public class SecondarySlideBarView extends BaseOverlayView {
                 DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) ==1;
         Settings.Global.putInt(getContentResolver(),DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS, desktopOn ? 0 : 1);
         Settings.Global.putInt(getContentResolver(),DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, desktopOn ? 0 : 1);
+        if(desktopOn){
+            Toast.makeText(mContext, R.string.desktop_mode_off_info, Toast.LENGTH_SHORT).show();
+        }
         updateDesktopStatus();
         dissmiss();
         mHandler.postDelayed(()->{

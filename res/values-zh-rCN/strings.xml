@@ -190,5 +190,6 @@
     <string name="clear_all">全部清除</string>
     <string name="calendar_more">更多</string>
     <string name="set_wallpaper">设置壁纸</string>
+    <string name="desktop_mode_off_info">更改在重新连接时生效</string>
     <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

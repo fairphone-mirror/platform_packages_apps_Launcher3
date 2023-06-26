@@ -407,7 +407,7 @@ public class SecondaryTaskBarView extends BaseOverlayView implements OnSharedPre
         shortcuts.add(new PinTaskBarShortcut(mPopupContainer,info,mTaskbarPinnedApps.contains(key)));
         int index = mTaskbar.indexOfChild((ViewGroup) view.getParent());
         int x = (index + 1)* getResources().getDimensionPixelSize(R.dimen.secondary_taskbar_icon_size);
-        int y = mLauncher.getDragLayer().getHeight() - dpToPx(220);
+        int y = mLauncher.getDragLayer().getHeight() - dpToPx(270);
         mPopupContainer.showPopupContainter(shortcuts, x, y);
     }
 

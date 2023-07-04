@@ -633,7 +633,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             int cellHeightPx = mIconSize + getCompoundDrawablePadding() +
                     (int) Math.ceil(fm.bottom - fm.top);
             int height = MeasureSpec.getSize(heightMeasureSpec);
-            setPadding(getPaddingLeft(), (height - cellHeightPx) / 2, getPaddingRight(),
+            setPadding(getPaddingLeft(), (height - cellHeightPx) * 3 / 4, getPaddingRight(),
                     getPaddingBottom());
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

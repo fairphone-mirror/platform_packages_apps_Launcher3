@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/bottom_sheet_edu_padding"
-                android:paddingTop="8dp"
+                android:paddingTop="6dp"
                 android:paddingRight="@dimen/bottom_sheet_edu_padding">
 
                 <FrameLayout

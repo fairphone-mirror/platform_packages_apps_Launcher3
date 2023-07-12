@@ -297,7 +297,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     public static final String ON_NEW_INTENT_EVT = "Launcher.onNewIntent";
 
     private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
-    private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.activity.onboarding.DeviceOnboardingActivity";
+    private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.compose.activity.FairphoneOnboardingActivity";
     private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
     private static final String IS_DT_CARRIER = "persist.sys.isdtcarrier";
 

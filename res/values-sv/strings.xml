@@ -173,7 +173,7 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"Sök på telefonen"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"Sök på surfplattan"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"Misslyckades: <xliff:g id="WHAT">%1$s</xliff:g>"</string>
-    <string name="notification_center_title">Anmälningscentrum</string>
+    <string name="notification_center_title">Aviseringscenter</string>
     <string name="add_to_taskbar_label">Lägg till i aktivitetsfältet</string>
     <string name="remove_from_taskbar_lable">Ta bort från aktivitetsfältet</string>
     <string name="sort_desktop_icon">Sortera ikoner efter namn</string>

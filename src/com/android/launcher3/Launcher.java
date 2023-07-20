@@ -565,7 +565,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                         UserHandle.myUserId());
             }
         }catch (Exception e){
-            Log.i("sth__","    Exception :" + e);
+            Log.i(TAG,"    Exception :" + e);
         }
     }
 

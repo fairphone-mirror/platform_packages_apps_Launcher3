@@ -255,6 +255,9 @@ public interface TaskShortcutFactory {
             final Task task  = taskContainer.getTask();
             final TaskView taskView = taskContainer.getTaskView();
             final RecentsView recentsView = taskView.getRecentsView();
+            if(recentsView == null){
+                return null;
+            }
             final PagedOrientationHandler orientationHandler =
                     recentsView.getPagedOrientationHandler();
 

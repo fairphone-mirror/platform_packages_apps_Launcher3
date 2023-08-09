@@ -362,8 +362,10 @@ public abstract class SwipeUpAnimationLogic implements
             mLocalTransformParams
                     .setTargetAlpha(alpha)
                     .setCornerRadius(cornerRadius);
-            mLocalTransformParams.applySurfaceParams(mLocalTransformParams
-                    .createSurfaceParams(this));
+            if(mLocalTransformParams.getTargetSet() != null) {
+                mLocalTransformParams.applySurfaceParams(mLocalTransformParams
+                        .createSurfaceParams(this));
+            }
             mAnimationFactory.update(currentRect, progress, mMatrix.mapRadius(cornerRadius));
         }
 

@@ -107,7 +107,9 @@ public class BaseDepthController {
         float depth = mDepth;
         IBinder windowToken = mLauncher.getRootView().getWindowToken();
         if (windowToken != null) {
-            mWallpaperManager.setWallpaperZoomOut(windowToken, depth);
+            if (depth != 1) {
+                mWallpaperManager.setWallpaperZoomOut(windowToken, depth);
+            }
         }
 
         if (!BlurUtils.supportsBlursOnWindows()) {

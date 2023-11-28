@@ -24,7 +24,10 @@ import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
 import android.os.UserHandle;
 import android.text.TextUtils;
-
+import android.util.Log;
+import android.os.SystemProperties;
+import android.provider.Settings;
+import android.database.ContentObserver;
 import androidx.annotation.WorkerThread;
 
 import com.android.launcher3.logging.FileLog;
@@ -41,6 +44,15 @@ public class SessionCommitReceiver extends BroadcastReceiver {
 
     // Preference key for automatically adding icon to homescreen.
     public static final String ADD_ICON_PREFERENCE_KEY = "pref_add_icon_to_home";
+    private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
+    //Operator AppList Configuration {PackageName,Screen,X,Y}
+    //Naming convention operatorAppPackageList + mcc + mcn
+    private static final String[][] operatorAppPackageList20404 = new String[][]{{"com.vodafone.android","0","1","4"},{"com.google.android.apps.googleassistant","0","3","4"}};
+    private static final String[][] operatorAppPackageList26202  = new String[][]{{"com.appseleration.android.selfcare","0","1","4"},{"com.vodafone.android.app.rbt","0","2","4"},{"au.com.vodafone.dreamlabapp","0","3","4"},{"com.google.android.apps.googleassistant","0","3","4"}};
+    private static final String[][] operatorAppPackageList23415 = new String[][]{{"com.myvodafoneapp","0","1","4"},{"au.com.vodafone.dreamlabapp","0","2","4"},{"com.google.android.apps.googleassistant","0","3","4"}};
+    //Google Folder AppList {PackageName,Container,ScreenId,Rank}
+    private static final String[][] googleAppPackageList = new String[][]{{"com.google.android.apps.subscriptions.red","6","0","9"}
+    ,{"com.google.android.apps.walletnfcrel","6","0","10"},{"com.google.android.apps.chromecast.app","6","0","11"}};
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -63,12 +75,91 @@ public class SessionCommitReceiver extends BroadcastReceiver {
         }
 
         InstallSessionHelper packageInstallerCompat = InstallSessionHelper.INSTANCE.get(context);
-        if (TextUtils.isEmpty(info.getAppPackageName())
-                || info.getInstallReason() != PackageManager.INSTALL_REASON_USER
-                || packageInstallerCompat.promiseIconAddedForId(info.getSessionId())) {
-            packageInstallerCompat.removePromiseIconId(info.getSessionId());
-            return;
+
+        boolean isOperatorApp = false;
+        boolean isGoogleApp = false;
+        String operatorAppList = Settings.Secure.getString(context.getContentResolver(), OPERATOR_APP_LIST_KEY);
+        String[] operatorAppArray = null;
+        if (operatorAppList != null) {
+            operatorAppArray = operatorAppList.split(",");
         }
+        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+        //mcc:204 mcn:04
+        if("20404".equals(mccmnc)){
+            for (int i = 0; i < operatorAppPackageList20404.length; i++) {
+                if(info.getAppPackageName().equals(operatorAppPackageList20404[i][0])) {
+                    isOperatorApp = true;
+                    if (operatorAppArray != null) {
+                        for(int j =0;j < operatorAppArray.length; j++) {
+                            if (info.getAppPackageName().equals(operatorAppArray[j])) {
+                                isOperatorApp = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //mcc:206 mcn:02
+        if("26202".equals(mccmnc)){
+            for (int i = 0; i < operatorAppPackageList26202.length; i++) {
+                if(info.getAppPackageName().equals(operatorAppPackageList26202[i][0])) {
+                    isOperatorApp = true;
+                    if (operatorAppArray != null) {
+                        for(int j =0;j < operatorAppArray.length; j++) {
+                            if (info.getAppPackageName().equals(operatorAppArray[j])) {
+                                isOperatorApp = false;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        //mcc:234 mcn:15
+        if("23415".equals(mccmnc)){
+            for (int i = 0; i < operatorAppPackageList23415.length; i++) {
+                if(info.getAppPackageName().equals(operatorAppPackageList23415[i][0])) {
+                    isOperatorApp = true;
+                    if (operatorAppArray != null) {
+                        for(int j =0;j < operatorAppArray.length; j++) {
+                            if (info.getAppPackageName().equals(operatorAppArray[j])) {
+                                isOperatorApp = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //check google apps
+        if ("20404".equals(mccmnc) || "26202".equals(mccmnc) || "23415".equals(mccmnc)) {
+            for (int i = 0; i < googleAppPackageList.length; i++) {
+                if(info.getAppPackageName().equals(googleAppPackageList[i][0])) {
+                    isGoogleApp = true;
+                    if (operatorAppArray != null) {
+                        for(int j =0;j < operatorAppArray.length; j++) {
+                            if (info.getAppPackageName().equals(operatorAppArray[j])) {
+                                isGoogleApp = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        FileLog.d(LOG,"isOperatorApp:"+isOperatorApp+" isGoogleApp:"+isGoogleApp);
+
+        if ((isOperatorApp || isGoogleApp) && context != null) {
+            ItemInstallQueue.INSTANCE.get(context).queueItem(info.getAppPackageName(), user);
+        } else {
+            if (TextUtils.isEmpty(info.getAppPackageName())
+                    || info.getInstallReason() != PackageManager.INSTALL_REASON_USER
+                    || packageInstallerCompat.promiseIconAddedForId(info.getSessionId())) {
+                packageInstallerCompat.removePromiseIconId(info.getSessionId());
+                return;
+            }
 
         FileLog.d(LOG,
                 "Adding package name to install queue. Package name: " + info.getAppPackageName()
@@ -77,6 +168,7 @@ public class SessionCommitReceiver extends BroadcastReceiver {
 
         ItemInstallQueue.INSTANCE.get(context)
                 .queueItem(info.getAppPackageName(), user);
+        }
     }
 
     public static boolean isEnabled(Context context) {

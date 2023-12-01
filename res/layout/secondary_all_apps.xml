@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_all_apps"
+        android:layout_width="360dp"
+        android:layout_height="570dp"
+        android:layout_gravity="start|bottom"
+        android:background="@drawable/bg_notification"
+        android:focusable="false"
+        android:saveEnabled="false"
+        android:layout_marginStart="12dp"
+        android:paddingStart="4dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="4dp">
+
+        <com.android.launcher3.ExtendedEditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/all_apps_search_bar_field_height"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/bg_all_apps_searchbox"
+            android:elevation="1dp"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:hint="@string/all_apps_search_bar_hint"
+            android:imeOptions="actionSearch|flagNoExtractUi"
+            android:inputType="text|textNoSuggestions|textCapWords"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:layout_marginTop="10dp"
+            android:saveEnabled="false"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textColorHint="@drawable/all_apps_search_hint"
+            android:textSize="16sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_apps"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/et_search"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

@@ -174,4 +174,23 @@
     <string name="search_pref_screen_title" msgid="3258959643336315962">"手机内搜索"</string>
     <string name="search_pref_screen_title_tablet" msgid="5220319680451343959">"平板电脑内搜索"</string>
     <string name="remote_action_failed" msgid="1383965239183576790">"失败：<xliff:g id="WHAT">%1$s</xliff:g>"</string>
+
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <string name="notification_center_title">通知中心</string>
+    <string name="add_to_taskbar_label">添加到任务栏</string>
+    <string name="remove_from_taskbar_lable">从任务栏移除</string>
+    <string name="sort_desktop_icon">根据名称排序</string>
+    <string name="arrange_icon">移动图标</string>
+    <string name="wifi_title">WLAN</string>
+    <string name="bluetooth_title">蓝牙</string>
+    <string name="celluar_title">数据流量</string>
+    <string name="sound_title">音量</string>
+    <string name="screenshot_title">截屏</string>
+    <string name="desktop_mode_title">桌面模式</string>
+    <string name="recents_empty_message">近期没有任何内容</string>
+    <string name="clear_all">全部清除</string>
+    <string name="calendar_more">更多</string>
+    <string name="set_wallpaper">设置壁纸</string>
+    <string name="desktop_mode_off_info">更改在重新连接时生效</string>
+    <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

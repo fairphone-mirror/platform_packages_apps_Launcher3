@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/entry"
+    android:layout_width="60dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:launcher="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.android.launcher3.BubbleTextView
+        android:id="@+id/icon"
+        style="@style/BaseIcon.Workspace"
+        launcher:iconDisplay="search_result_tall" />
+
+    <ImageView
+        android:id="@+id/pinned_icon"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_gravity="bottom|left"
+        android:src="@drawable/tb_reply"
+        android:scaleX="-1"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</FrameLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 
+        android:height="24dp"
+        android:width="24dp"
+        android:drawable="@drawable/ic_radio_checked"/>
+
+    <item
+        android:height="14dp"
+        android:width="14dp"
+        android:gravity="center"
+        android:drawable="@drawable/ic_sound"/>
+
+</layer-list>

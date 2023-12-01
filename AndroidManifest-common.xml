@@ -45,6 +45,22 @@
     <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.WAKEUP_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"
+            android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"
+            android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+            android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!--ADD by T2M yingyubin for Desktop mode-->
 
     <!--
     Permissions required for read/write access to the workspace data. These permission name
@@ -183,5 +199,15 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
+
+        <!--ADD by T2M yingyubin for Desktop mode-->
+        <activity
+            android:name="com.android.launcher3.secondarydisplay.wallpaper.SecondaryWallpaperPicker"
+            android:theme="@style/AppTheme"
+            android:resizeableActivity="true"
+            android:exported="false"
+            android:enabled="true">
+        </activity>
+        <!--ADD by T2M yingyubin for Desktop mode-->
     </application>
 </manifest>

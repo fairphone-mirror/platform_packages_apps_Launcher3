@@ -449,4 +449,25 @@
     <string name="search_pref_screen_title_tablet">Search your tablet</string>
     <!-- Failed action error message: e.g. Failed: Pause -->
     <string name="remote_action_failed">Failed: <xliff:g id="what" example="Pause">%1$s</xliff:g></string>
+
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <string name="tb_clock" translatable="false">%1$s\n%2$s</string>
+    <string name="notification_center_title">Notification Center</string>
+    <string name="add_to_taskbar_label">Add to Taskbar</string>
+    <string name="remove_from_taskbar_lable">Remove from Taskbar</string>
+
+    <string name="sort_desktop_icon">Sort icons by name</string>
+    <string name="arrange_icon">Move icon</string>
+    <string name="wifi_title">Wifi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobile data</string>
+    <string name="sound_title">Sound</string>
+    <string name="screenshot_title">ScreenShot</string>
+    <string name="desktop_mode_title">Desktop mode</string>
+    <string name="recents_empty_message">No recent items</string>
+    <string name="clear_all">Clear All</string>
+    <string name="calendar_more">More</string>
+    <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="desktop_mode_off_info">Changes take effect when is reconnected</string>
+    <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

@@ -426,4 +426,20 @@
         <item name="horizontalPadding">16dp</item>
     </style>
 
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <style name="recent_anim">
+        <item name="android:windowEnterAnimation">@anim/recents_in</item>
+        <item name="android:windowExitAnimation">@anim/recents_out</item>
+    </style>
+
+    <style name="slidebar_anim">
+        <item name="android:windowEnterAnimation">@anim/slidebar_in</item>
+        <item name="android:windowExitAnimation">@anim/slidebar_out</item>
+    </style>
+
+    <style name="bottom_anim">
+        <item name="android:windowEnterAnimation">@anim/bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_out</item>
+    </style>
+    <!--ADD by T2M yingyubin for Desktop mode-->
 </resources>

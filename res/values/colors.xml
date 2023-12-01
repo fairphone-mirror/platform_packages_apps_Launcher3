@@ -90,6 +90,13 @@
     <color name="drop_target_hover_button_color_light">#D3E3FD</color>
     <color name="drop_target_hover_button_color_dark">#0842A0</color>
 
+    <!--ADD by T2M yingyubin for Desktop mode-->
+    <color name="active_color">#1678EF</color>
+    <color name="inactive_color">#AAAAAA</color>
+    <color name="secondary_task_bar_background">#88464746</color>
+    <color name="wallpaper_picker_translucent_gray">#66000000</color>
+    <!--ADD by T2M yingyubin for Desktop mode-->
+
     <color name="preload_icon_accent_color_light">#00668B</color>
     <color name="preload_icon_background_color_light">#B5CAD7</color>
     <color name="preload_icon_accent_color_dark">#4BB6E8</color>

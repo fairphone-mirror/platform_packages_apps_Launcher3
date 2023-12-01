@@ -15,6 +15,13 @@
  */
 package com.android.launcher3.secondarydisplay;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.android.launcher3.secondarydisplay.wallpaper.SecondaryWallpaperPicker.SECONDARY_WALLPAPER;
+import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import static com.android.launcher3.Utilities.dpToPx;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
@@ -25,8 +32,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-
+import android.app.Activity;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.content.Context;
 import androidx.annotation.UiThread;
+import android.view.WindowManager;
+import android.graphics.Color;
+import com.android.systemui.shared.system.ActivityManagerWrapper;
+import android.content.pm.LauncherApps;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.provider.Settings;
 
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.BaseDraggingActivity;
@@ -51,31 +71,56 @@ import com.android.launcher3.model.StringCache;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
+import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.popup.PopupContainerWithArrow;
 import com.android.launcher3.popup.PopupDataProvider;
 import com.android.launcher3.touch.ItemClickHandler.ItemClickProxy;
 import com.android.launcher3.util.ComponentKey;
+import com.android.launcher3.util.IntArray;
+import com.android.launcher3.util.ItemInfoMatcher;
 import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.OnboardingPrefs;
 import com.android.launcher3.util.PackageUserKey;
 import com.android.launcher3.util.Preconditions;
 import com.android.launcher3.util.Themes;
+import com.android.launcher3.util.ViewOnDrawExecutor;
 import com.android.launcher3.views.BaseDragLayer;
+import com.android.launcher3.widget.model.WidgetsListBaseEntry;
+import com.android.launcher3.BubbleTextView;
+import com.android.launcher3.secondarydisplay.SecondaryOptionsPopupView;
+import com.android.launcher3.secondarydisplay.SecondaryTaskBarView;
+import com.android.launcher3.secondarydisplay.SecondaryTaskBarListner;
+import com.android.launcher3.secondarydisplay.SpaceItemDecoration;
+import com.android.launcher3.secondarydisplay.SecondarySlideBarView;
+import com.android.launcher3.secondarydisplay.SecondaryRecentsView;
+import com.android.launcher3.secondarydisplay.CalendarMonthView;
+import com.android.launcher3.secondarydisplay.OverlayManager;
+import com.android.launcher3.secondarydisplay.SecondaryRecentsListener;
+import android.service.notification.StatusBarNotification;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.Utilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Launcher activity for secondary displays
  */
 public class SecondaryDisplayLauncher extends BaseDraggingActivity
-        implements BgDataModel.Callbacks, DragController.DragListener {
+        implements BgDataModel.Callbacks, DragController.DragListener, SecondaryTaskBarListner,OnSharedPreferenceChangeListener {
 
     private LauncherModel mModel;
     private BaseDragLayer mDragLayer;
     private SecondaryDragController mDragController;
     private ActivityAllAppsContainerView<SecondaryDisplayLauncher> mAppsView;
     private View mAppsButton;
+    private SecondaryDisplayLauncher mLauncher;
 
     private PopupDataProvider mPopupDataProvider;
 
@@ -87,17 +132,27 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
     private SecondaryDisplayPredictions mSecondaryDisplayPredictions;
 
     private final int[] mTempXY = new int[2];
+    private SecondaryTaskBarView mTaskBarView;
+    private SecondarySlideBarView mSlideBar;
+    private SecondaryRecentsListener mRecentsListener;
+    private LauncherApps mLauncherApps;
+    private SecondaryRecentsView mRecentsView;
+    private SecondaryAllAppsView mAllApps;
+    private CalendarMonthView mCalendarView;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mModel = LauncherAppState.getInstance(this).getModel();
+        mLauncher = this;
         mDragController = new SecondaryDragController(this);
         mOnboardingPrefs = new OnboardingPrefs<>(this, LauncherPrefs.getPrefs(this));
         mSecondaryDisplayPredictions = SecondaryDisplayPredictions.newInstance(this);
         if (getWindow().getDecorView().isAttachedToWindow()) {
             initUi();
         }
+        hideSystemUI();
     }
 
     @Override
@@ -129,6 +184,47 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
 
         setContentView(R.layout.secondary_launcher);
         mDragLayer = findViewById(R.id.drag_layer);
+        GestureDetector detector =new GestureDetector(this, new GestureDetector.OnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if(!isAppDrawerShown()){
+                    float x = e.getAxisValue(MotionEvent.AXIS_X);
+                    float y = e.getAxisValue(MotionEvent.AXIS_Y);
+                    SecondaryOptionsPopupView.showDefaultOptions(mLauncher,x,y);
+                }
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                return false;
+            }
+        });
+        mDragLayer.setOnTouchListener((v,event)->{
+            if(detector!=null){
+                detector.onTouchEvent(event);
+            }
+            return false;
+        });
         mAppsView = findViewById(R.id.apps_view);
         mAppsButton = findViewById(R.id.all_apps_button);
 
@@ -137,6 +233,22 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
                 mAppsView.getAppsStore()::updateNotificationDots);
 
         mModel.addCallbacksAndLoad(this);
+
+        getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
+        mDragLayer.setBackground(getResources().getDrawable(R.drawable.wallpaper_02));
+        mSharedPreferences = LauncherPrefs.getPrefs(this);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        onSharedPreferenceChanged(mSharedPreferences, SECONDARY_WALLPAPER);
+        mLauncherApps = getSystemService(LauncherApps.class);
+        int displayId = getDisplay().getDisplayId();
+        mRecentsListener = new SecondaryRecentsListener(MAIN_EXECUTOR, ActivityManagerWrapper.getInstance(),
+                mLauncherApps, displayId, SecondarySystemUIProxy.INSTANCE.get(this));
+        mTaskBarView = new SecondaryTaskBarView(this, mAppsView.getAppsStore(), this);
+        mTaskBarView.show();
+        mSlideBar = new SecondarySlideBarView(this);
+        mRecentsView = new SecondaryRecentsView(this);
+        mAllApps = new SecondaryAllAppsView(this);
+        mCalendarView = new CalendarMonthView(this);
     }
 
     @Override
@@ -191,7 +303,141 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(mSharedPreferences != null){
+            mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        }
+        OverlayManager.getInstance().release();
+        if(mCalendarView != null){
+            mCalendarView.onDestroy();
+        }
+        if(mAllApps != null){
+            mAllApps.onDestroy();
+        }
+        if(mRecentsListener != null) {
+            mRecentsListener.onDestory();
+        }
+        if(mTaskBarView != null){
+            mTaskBarView.onDestroy();
+        }
+        if(mSlideBar != null) {
+            mSlideBar.onDestroy();
+        }
+        if(mRecentsView != null) {
+            mRecentsView.onDestroy();
+        }
         mModel.removeCallbacks(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (SECONDARY_WALLPAPER.equals(key)) {
+            String path = prefs.getString(key,null);
+            if(path != null){
+                if(path.endsWith("png")){
+                    UI_HELPER_EXECUTOR.execute(()->{
+                        Bitmap bitmap = BitmapFactory.decodeFile(path);
+                        MAIN_EXECUTOR.execute(()->{
+                            if(bitmap != null){
+                                BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+                                bitmapDrawable.setFilterBitmap(true);
+                                mDragLayer.setBackground(bitmapDrawable);
+                            }
+                        });
+                    });
+                } else {
+                    mDragLayer.setBackground(getResources().getDrawable(Integer.parseInt(path)));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onStartButtonClick(){
+        if(mAllApps.isShow()){
+            mAllApps.dissmiss();
+        } else {
+            mAllApps.show();
+        }
+        //showAppDrawer(!isAppDrawerShown());
+    }
+
+    @Override
+    public void onStatusBarClick(){
+        if(mSlideBar.isShow()){
+            mSlideBar.dissmiss();
+        }else {
+            mSlideBar.show();
+        }
+    }
+
+    @Override
+    public void onIconClick(View v,ItemInfo info, int taskId) {
+        Intent intent = info.getIntent();
+        if (intent == null) {
+            throw new IllegalArgumentException("Input must have a valid intent");
+        }
+        if(taskId == -1){
+            startActivitySafely(v, intent, info);
+        } else {
+            ActivityManagerWrapper.getInstance().startActivityFromRecents(taskId, null);
+        }
+    }
+
+    @Override
+    public void onRecentClick(){
+        if(mRecentsView.isShow()){
+            mRecentsView.dissmiss();
+        } else {
+            mRecentsView.show();
+        }
+    }
+
+    @Override
+    public void onHomeClick(){
+        if(mRecentsView.isShow()){
+            mRecentsView.dissmiss();
+        }
+        if(isDesktopModeOn()){
+            navigateHome();
+        }
+    }
+
+    @Override
+    public void onCalendarClick(){
+        if(mCalendarView.isShow()){
+            mCalendarView.dissmiss();
+        } else {
+            if(mSlideBar.isShow()){
+                mSlideBar.dissmiss();
+            }
+            mCalendarView.show();
+        }
+    }
+
+    private boolean isDesktopModeOn(){
+        boolean desktopOn = Settings.Global.getInt(getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1;
+        return desktopOn;
+    }
+
+    private void navigateHome() {
+        startActivity(new Intent(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_SECONDARY_HOME));
+    }
+
+    private void hideSystemUI() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    }
+
+    public SecondaryRecentsListener getSecondaryRecentsListener(){
+        return mRecentsListener;
     }
 
     public boolean isAppDrawerShown() {
@@ -255,7 +501,7 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
         if (show) {
             mAppDrawerShown = true;
             mAppsView.setVisibility(View.VISIBLE);
-            mAppsButton.setVisibility(View.INVISIBLE);
+            mAppsButton.setVisibility(View.GONE);
             mSecondaryDisplayPredictions.updateAppDivider();
         } else {
             mAppDrawerShown = false;
@@ -263,7 +509,7 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mAppsView.setVisibility(View.INVISIBLE);
-                    mAppsButton.setVisibility(View.VISIBLE);
+                    mAppsButton.setVisibility(View.GONE);
                     mAppsView.getSearchUiManager().resetSearch();
                 }
             });
@@ -361,6 +607,10 @@ public class SecondaryDisplayLauncher extends BaseDraggingActivity
             }
             startActivitySafely(v, intent, item);
         }
+    }
+
+    public static SecondaryDisplayLauncher getLauncher(Context context) {
+        return fromContext(context);
     }
 
     /**

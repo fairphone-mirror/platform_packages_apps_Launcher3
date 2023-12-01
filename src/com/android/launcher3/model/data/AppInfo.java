@@ -50,6 +50,13 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
         return uc != 0 ? uc : a.componentName.compareTo(b.componentName);
     };
 
+    //ADD by T2M yingyubin for Desktop mode
+    public static final Comparator<AppInfo> TITLE_COMPARATOR = (a, b) -> {
+        int uc = a.user.hashCode() - b.user.hashCode();
+        return uc != 0 ? uc : a.title.toString().compareTo(b.title.toString());
+    };
+    //ADD by T2M yingyubin for Desktop mode
+
     /**
      * The intent used to start the application.
      */

@@ -19,6 +19,7 @@ import static android.app.ActivityManager.RECENT_IGNORE_UNAVAILABLE;
 
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
 
 import android.app.ActivityManager;
 import android.app.PendingIntent;
@@ -44,6 +45,7 @@ import android.view.RemoteAnimationAdapter;
 import android.view.RemoteAnimationTarget;
 import android.view.SurfaceControl;
 import android.window.IOnBackInvokedCallback;
+import android.provider.Settings;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -925,5 +927,11 @@ public class SystemUiProxy implements ISystemUiProxy {
                 Log.w(TAG, "Failed call showDesktopApps", e);
             }
         }
+    }
+
+    public boolean isDesktopOn(){
+        boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS, 0) == 1;
+        return desktopOn;
     }
 }

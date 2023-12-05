@@ -132,6 +132,9 @@ public class RecentTasksList {
      */
     public synchronized int getTasks(boolean loadKeysOnly,
             Consumer<ArrayList<GroupTask>> callback, Predicate<GroupTask> filter) {
+        if(mSysUiProxy.isDesktopOn()) {
+            invalidateLoadedTasks();
+        }
         final int requestLoadId = mChangeId;
         if (mResultsUi.isValidForRequest(requestLoadId, loadKeysOnly)) {
             // The list is up to date, send the callback on the next frame,

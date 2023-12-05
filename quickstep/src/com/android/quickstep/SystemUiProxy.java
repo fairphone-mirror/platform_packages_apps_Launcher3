@@ -19,6 +19,7 @@ import static android.app.ActivityManager.RECENT_IGNORE_UNAVAILABLE;
 
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
 
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
@@ -50,6 +51,7 @@ import android.window.IOnBackInvokedCallback;
 import android.window.RemoteTransition;
 import android.window.TaskSnapshot;
 import android.window.TransitionFilter;
+import android.provider.Settings;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
@@ -1252,5 +1254,11 @@ public class SystemUiProxy implements ISystemUiProxy {
             Log.e(TAG, "Error querying drag state", e);
             return false;
         }
+    }
+
+    public boolean isDesktopOn(){
+        boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS, 0) == 1;
+        return desktopOn;
     }
 }

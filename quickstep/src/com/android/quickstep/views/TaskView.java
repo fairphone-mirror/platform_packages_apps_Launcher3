@@ -816,6 +816,10 @@ public class TaskView extends FrameLayout implements Reusable {
                 mThumbnailLoadRequest = thumbnailCache.updateThumbnailInBackground(
                         mTask, thumbnail -> {
                             mSnapshotView.setThumbnail(mTask, thumbnail);
+                            if(SystemUiProxy.INSTANCE.get(getContext()).isDesktopOn() &&
+                                    thumbnail != null && thumbnail.thumbnail == null){
+                                setVisibility(View.GONE);
+                            }
                         });
             }
             if (needsUpdate(changes, FLAG_UPDATE_ICON)) {

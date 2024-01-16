@@ -70,9 +70,9 @@ public class SecondaryAllAppsAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
         });
         icon.setOnGenericMotionListener((view, motionEvent) -> {
-            int action = motionEvent.getAction();
+            int action = motionEvent.getActionButton();
 
-            if(action == MotionEvent.ACTION_BUTTON_PRESS
+            if(action == MotionEvent.ACTION_BUTTON_RELEASE
                     && motionEvent.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
                 if(mListener != null){
                     mListener.onIconLongClick(view, info);

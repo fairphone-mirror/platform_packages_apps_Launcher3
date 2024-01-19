@@ -297,9 +297,11 @@ public class SecondaryDragLayer extends BaseDragLayer<SecondaryDisplayLauncher> 
             AppInfo info = appList.get(i);
             //temp
             for(DesktopIconKey key : mDesktopApps) {
-                if(key.getComponentKey().componentName.equals(info.getTargetComponent())){
-                    key.setPos(i);
-                    break;
+                if (null != key.getComponentKey().componentName) {
+                    if(key.getComponentKey().componentName.equals(info.getTargetComponent())){
+                        key.setPos(i);
+                        break;
+                    }
                 }
             }
         }

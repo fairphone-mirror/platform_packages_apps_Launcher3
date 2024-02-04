@@ -819,6 +819,8 @@ public class TaskView extends FrameLayout implements Reusable {
                             if(SystemUiProxy.INSTANCE.get(getContext()).isDesktopOn() &&
                                     thumbnail != null && thumbnail.thumbnail == null){
                                 setVisibility(View.GONE);
+                                getRecentsView().onViewRemoved(this);
+                                ActivityManagerWrapper.getInstance().removeTask(mTask.key.id);
                             }
                         });
             }

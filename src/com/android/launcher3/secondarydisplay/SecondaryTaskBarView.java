@@ -389,11 +389,9 @@ public class SecondaryTaskBarView extends BaseOverlayView implements OnSharedPre
             onIconLongClicked(view,info);
             return true;
         });
-        icon.setOnGenericMotionListener((view, motionEvent) -> {
-            int action = motionEvent.getAction();
-
-            if(action == MotionEvent.ACTION_BUTTON_PRESS
-                    && motionEvent.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
+        icon.setOnTouchListener((view,event)->{
+            if(event.getAction() == MotionEvent.ACTION_DOWN
+                    && event.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
                 onIconLongClicked(view,info);
             }
             return false;

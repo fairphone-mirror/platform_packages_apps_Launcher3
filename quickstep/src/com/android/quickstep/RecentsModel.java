@@ -127,6 +127,7 @@ public class RecentsModel implements IconChangeListener, TaskStackChangeListener
      * @param callback Receives true if task is removed, false otherwise
      */
     public void isTaskRemoved(int taskId, Consumer<Boolean> callback) {
+        mTaskList.onRecentTasksChanged();
         mTaskList.getTasks(true /* loadKeysOnly */, (taskGroups) -> {
             for (GroupTask group : taskGroups) {
                 if (group.containsTask(taskId)) {
@@ -151,6 +152,7 @@ public class RecentsModel implements IconChangeListener, TaskStackChangeListener
             return;
         }
 
+        mTaskList.onRecentTasksChanged();
         // Keep the cache up to date with the latest thumbnails
         ActivityManager.RunningTaskInfo runningTask =
                 ActivityManagerWrapper.getInstance().getRunningTask();

@@ -20,12 +20,7 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageInstaller.SessionInfo;
 import android.os.UserHandle;
-import android.util.Log;
 import android.util.Pair;
-import android.os.SystemProperties;
-import android.database.Cursor;
-import android.provider.Settings;
-import android.database.ContentObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,7 +40,6 @@ import com.android.launcher3.pm.InstallSessionHelper;
 import com.android.launcher3.pm.PackageInstallInfo;
 import com.android.launcher3.util.IntArray;
 import com.android.launcher3.util.PackageManagerHelper;
-import com.android.launcher3.LauncherSettings.Favorites;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +57,6 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
 
     @NonNull
     private final WorkspaceItemSpaceFinder mItemSpaceFinder;
-
-    //Google Folder AppList {PackageName,Container,ScreenId,Rank}
-    private static final String[][] googleAppPackageList = new String[][]{{"com.google.android.apps.subscriptions.red","6","0","9"},{"com.google.android.apps.walletnfcrel","6","0","10"}
-    ,{"com.google.android.apps.chromecast.app","6","0","11"}};
-    private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
 
     /**
      * @param itemList items to add on the workspace
@@ -132,10 +121,10 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
 
             for (ItemInfo item : filteredItems) {
                 // Find appropriate space for the item.
-                mItemSpaceFinder.setItemInfo(item);
                 int[] coords = mItemSpaceFinder.findSpaceForItem(app, dataModel, workspaceScreens,
                         addedWorkspaceScreensFinal, item.spanX, item.spanY);
                 int screenId = coords[0];
+
                 ItemInfo itemInfo;
                 if (item instanceof WorkspaceItemInfo || item instanceof FolderInfo ||
                         item instanceof LauncherAppWidgetInfo) {
@@ -199,81 +188,16 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                     }
                 }
 
-                boolean isGoogleApp = false;
-                String operatorAppList = Settings.Secure.getString(app.getContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
-                String[] operatorAppArray = null;
-                if (operatorAppList != null) {
-                    operatorAppArray = operatorAppList.split(",");
-                }
-                String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
-                //check google apps
-                if ("20404".equals(mccmnc) || "26202".equals(mccmnc) || "23415".equals(mccmnc)) {
-                    for (int i = 0; i < googleAppPackageList.length; i++) {
-                        if(itemInfo.getTargetPackage().contains(googleAppPackageList[i][0])) {
-                            isGoogleApp = true;
-                            itemInfo.container = Integer.parseInt(googleAppPackageList[i][1]);
-                            itemInfo.screenId = Integer.parseInt(googleAppPackageList[i][2]);
-                            itemInfo.rank = Integer.parseInt(googleAppPackageList[i][3]);
-                            if (operatorAppArray != null) {
-                                for(int j =0;j < operatorAppArray.length; j++) {
-                                    if (googleAppPackageList[i][0].equals(operatorAppArray[j])) {
-                                        isGoogleApp = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                // Add the shortcut to the db
+                getModelWriter().addItemToDatabase(itemInfo,
+                        LauncherSettings.Favorites.CONTAINER_DESKTOP, screenId,
+                        coords[1], coords[2]);
 
-                if (isGoogleApp) {
-                    boolean hasGoogleFolder = false;
-                    try (Cursor c = app.getContext().getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI,
-                        new String[] {LauncherSettings.Favorites.CONTAINER},LauncherSettings.Favorites. CONTAINER + "= 6", null, null)) {
-                        int num=0;
-                        while (c.moveToNext()) {
-                            num++;
-                        }
-                        if (num > 1) {
-                            hasGoogleFolder = true;
-                        }
-                    } catch (Exception e) {
-                        FileLog.d(LOG,  "Error querying for launcher widget info", e);
-                    }
+                // Save the WorkspaceItemInfo for binding in the workspace
+                addedItemsFinal.add(itemInfo);
 
-                    if (hasGoogleFolder) {
-                        for (int i = 0; i < googleAppPackageList.length; i++) {
-                            if(itemInfo.getTargetPackage().contains(googleAppPackageList[i][0])) {
-                                boolean has = false;
-                                if (operatorAppArray != null) {
-                                    for (int j = 0;j < operatorAppArray.length; j++) {
-                                        if (googleAppPackageList[i][0].equals(operatorAppArray[j])) {
-                                            has = true;
-                                        }
-                                    }
-                                }
-                                if (!has) {
-                                    operatorAppList = operatorAppList +","+googleAppPackageList[i][0];
-                                    boolean isSaveSuccesses =Settings.Secure.putString(app.getContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppList);
-                                    FileLog.d(LOG, "Save the Google App PackageName isSaveSuccesses:"+isSaveSuccesses);
-                                }
-                            }
-                        }
-                        // Add the deep shortcut to the db
-                        getModelWriter().addItemToDatabase(itemInfo,
-                            LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT,itemInfo.screenId,3, 3);
-                        app.getModel().forceReload();
-                    }
-                    return;
-                } else {
-                    // Add the shortcut to the db
-                    getModelWriter().addItemToDatabase(itemInfo,
-                        LauncherSettings.Favorites.CONTAINER_DESKTOP, screenId,coords[1], coords[2]);
-                    // Save the WorkspaceItemInfo for binding in the workspace
-                    addedItemsFinal.add(itemInfo);
-
-                    // log bitmap and label
-                    FileLog.d(LOG, "Adding item info to workspace: " + itemInfo);
-                }
+                // log bitmap and label
+                FileLog.d(LOG, "Adding item info to workspace: " + itemInfo);
             }
         }
 

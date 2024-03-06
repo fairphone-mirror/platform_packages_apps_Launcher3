@@ -172,6 +172,7 @@ public class RecentsModel implements IconChangeListener, TaskStackChangeListener
             return;
         }
 
+        mTaskList.onRecentTasksChanged();
         // Keep the cache up to date with the latest thumbnails
         ActivityManager.RunningTaskInfo runningTask =
                 ActivityManagerWrapper.getInstance().getRunningTask();

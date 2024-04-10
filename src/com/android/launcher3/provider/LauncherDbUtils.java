@@ -81,11 +81,40 @@ public class LauncherDbUtils {
                 Process.myUserHandle());
         dropTable(toDb, toTable);
         Favorites.addTableToDb(toDb, userSerial, false, toTable);
+
+        boolean isFromDbExists = tableExists(fromDb,fromTable);
+        boolean isToDbExists = tableExists(toDb,toTable);
+        if (!isFromDbExists || !isToDbExists) {
+            return;
+        }
+
+        Cursor fromDbCursor = fromDb.rawQuery("SELECT * FROM "+fromTable, null);
+        int fromDbColumnCount = fromDbCursor.getColumnCount();
+        Cursor toDbCursor = toDb.rawQuery("SELECT * FROM "+toTable, null);
+        int toDbColumnCount = toDbCursor.getColumnCount();
+
         if (fromDb != toDb) {
-            toDb.execSQL("ATTACH DATABASE '" + fromDb.getPath() + "' AS from_db");
-            toDb.execSQL(
-                    "INSERT INTO " + toTable + " SELECT * FROM from_db." + fromTable);
-            toDb.execSQL("DETACH DATABASE 'from_db'");
+            if (fromDbColumnCount != toDbColumnCount) {
+                toDb.execSQL("ATTACH DATABASE '" + fromDb.getPath() + "' AS from_db");
+                String sql = "INSERT INTO " + toTable + "("
+                +"_id," +"title," +"intent," +"container," +"screen,"
+                +"cellX," +"cellY," +"spanX," +"spanY," +"itemType,"
+                +"appWidgetId," +"icon," +"appWidgetProvider," +"modified," +"restored,"
+                +"profileId," +"rank," +"options," +"appWidgetSource"+")"
+                + " SELECT "
+                +"_id," +"title," +"intent," +"container," +"screen,"
+                +"cellX," +"cellY," +"spanX," +"spanY," +"itemType,"
+                +"appWidgetId," +"icon," +"appWidgetProvider," +"modified," +"restored,"
+                +"profileId," +"rank," +"options," +"appWidgetSource"
+                +" FROM from_db." + fromTable;
+                toDb.execSQL(sql);
+                toDb.execSQL("DETACH DATABASE 'from_db'");
+            } else {
+                toDb.execSQL("ATTACH DATABASE '" + fromDb.getPath() + "' AS from_db");
+                toDb.execSQL(
+                        "INSERT INTO " + toTable + " SELECT * FROM from_db." + fromTable);
+                toDb.execSQL("DETACH DATABASE 'from_db'");
+            }
         } else {
             toDb.execSQL("INSERT INTO " + toTable + " SELECT * FROM " + fromTable);
         }

@@ -320,6 +320,7 @@ public class InvariantDeviceProfile {
         if (!"4_by_4".equals(currentGridName) && !isSetted) {
             currentGridName = "4_by_4";
             sharedPreferences.edit().putBoolean("GridName",true).commit();
+            LauncherPrefs.get(context).put(GRID_NAME, currentGridName);
         }
         return currentGridName;
     }

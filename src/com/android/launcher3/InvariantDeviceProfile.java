@@ -40,7 +40,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.util.Xml;
 import android.view.Display;
-import android.content.SharedPreferences;
 
 import androidx.annotation.DimenRes;
 import androidx.annotation.IntDef;
@@ -314,14 +313,7 @@ public class InvariantDeviceProfile {
     }
 
     public static String getCurrentGridName(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("GridInfo", Context.MODE_PRIVATE);
-        String currentGridName = LauncherPrefs.get(context).get(GRID_NAME);
-        boolean isSetted = sharedPreferences.getBoolean("GridName", false);
-        if (!"4_by_4".equals(currentGridName) && !isSetted) {
-            currentGridName = "4_by_4";
-            sharedPreferences.edit().putBoolean("GridName",true).commit();
-        }
-        return currentGridName;
+        return LauncherPrefs.get(context).get(GRID_NAME);
     }
 
     private String initGrid(Context context, String gridName) {

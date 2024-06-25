@@ -143,10 +143,10 @@ public class AppsDividerView extends View implements FloatingHeaderRow {
                     sectionCount++;
                 }
             }
-
-            if (mShowAllAppsLabel && sectionCount > 0) {
-                dividerType = DividerType.ALL_APPS_LABEL;
-            } else if (sectionCount == 1) {
+            // if (mShowAllAppsLabel && sectionCount > 0) {
+            //     dividerType = DividerType.ALL_APPS_LABEL;
+            // } else
+            if (sectionCount > 0) {
                 dividerType = DividerType.LINE;
             } else {
                 dividerType = DividerType.NONE;
@@ -159,7 +159,8 @@ public class AppsDividerView extends View implements FloatingHeaderRow {
             int bottomPadding;
             switch (dividerType) {
                 case LINE:
-                    topPadding = 0;
+                    topPadding = getResources()
+                            .getDimensionPixelSize(R.dimen.all_apps_prediction_row_divider_height);
                     bottomPadding = getResources()
                             .getDimensionPixelSize(R.dimen.all_apps_prediction_row_divider_height);
                     mPaint.setColor(mStrokeColor);

@@ -51,6 +51,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.graphics.FragmentWithPreview;
 import com.android.launcher3.widget.util.WidgetSizes;
+import com.android.launcher3.Launcher;
 
 /**
  * A frame layout which contains a QSB. This internally uses fragment to bind the view, which
@@ -271,6 +272,12 @@ public class QsbContainerView extends FrameLayout {
             if (mQsb != null && mQsb.isReinflateRequired(mOrientation)) {
                 rebindFragment();
             }
+            if (Launcher.QsbReceiver.GSB_ON_HOME_SCREEN) {
+                mWrapper.removeAllViews();
+                mWrapper.addView(createQsb(mWrapper));
+            } else {
+                mWrapper.removeAllViews();
+            }
         }
 
         @Override
@@ -293,7 +300,8 @@ public class QsbContainerView extends FrameLayout {
 
         public boolean isQsbEnabled() {
             return FeatureFlags.QSB_ON_FIRST_SCREEN
-                    && !SHOULD_SHOW_FIRST_PAGE_WIDGET;
+                    && !SHOULD_SHOW_FIRST_PAGE_WIDGET
+                    && Launcher.QsbReceiver.GSB_ON_HOME_SCREEN;
         }
 
         protected Bundle createBindOptions() {

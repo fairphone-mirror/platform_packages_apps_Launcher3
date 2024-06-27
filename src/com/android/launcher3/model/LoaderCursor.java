@@ -36,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.InvariantDeviceProfile;
+import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.Utilities;
@@ -542,7 +543,7 @@ public class LoaderCursor extends CursorWrapper {
                 // container.
                 int spanX = mIDP.numSearchContainerColumns;
                 int spanY = 1;
-                screen.markCells(0, 0, spanX, spanY, true);
+                screen.markCells(0, 0, spanX, spanY, Launcher.GSB_ON_HOME_SCREEN);
             }
             mOccupied.put(item.screenId, screen);
         }

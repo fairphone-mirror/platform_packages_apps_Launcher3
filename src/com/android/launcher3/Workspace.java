@@ -594,7 +594,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      * Initializes and binds the first page
      */
     public void bindAndInitFirstWorkspaceScreen() {
-        if (!FeatureFlags.QSB_ON_FIRST_SCREEN) {
+        if (!FeatureFlags.QSB_ON_FIRST_SCREEN || !Launcher.GSB_ON_HOME_SCREEN) {
             return;
         }
 

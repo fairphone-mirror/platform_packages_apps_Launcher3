@@ -92,6 +92,8 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -351,6 +353,8 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     private DropTargetBar mDropTargetBar;
 
+    private QsbReceiver qsbReceiver;
+
     // Main container view for the all apps screen.
     @Thunk
     ActivityAllAppsContainerView<Launcher> mAppsView;
@@ -412,6 +416,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     private boolean mTouchInProgress;
 
     private SafeCloseable mUserChangedCallbackCloseable;
+    public static boolean GSB_ON_HOME_SCREEN = true;
 
     // New InstanceId is assigned to mAllAppsSessionLogId for each AllApps sessions.
     // When Launcher is not in AllApps state mAllAppsSessionLogId will be null.
@@ -503,6 +508,13 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         LauncherAppState app = LauncherAppState.getInstance(this);
         mModel = app.getModel();
+
+        qsbReceiver = new QsbReceiver();
+        registerReceiver();
+
+        // Initialize the search bar state from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("QsbPrefs", Context.MODE_PRIVATE);
+        GSB_ON_HOME_SCREEN = sharedPreferences.getBoolean(QsbReceiver.KEY_SEARCH_BAR, true);
 
         mRotationHelper = new RotationHelper(this);
         InvariantDeviceProfile idp = app.getInvariantDeviceProfile();
@@ -2357,7 +2369,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         int count = orderedScreenIds.size();
         for (int i = 0; i < count; i++) {
             int screenId = orderedScreenIds.get(i);
-            if (FeatureFlags.QSB_ON_FIRST_SCREEN && screenId == Workspace.FIRST_SCREEN_ID) {
+            if (FeatureFlags.QSB_ON_FIRST_SCREEN && Launcher.GSB_ON_HOME_SCREEN && screenId == Workspace.FIRST_SCREEN_ID) {
                 // No need to bind the first screen, as its always bound.
                 continue;
             }
@@ -3380,6 +3392,41 @@ public class Launcher extends StatefulActivity<LauncherState>
             return false; // Return false to continue iterating through all the items.
         });
     }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter("com.android.display.ACTION_SWITCH_TOGGLED");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            registerReceiver(qsbReceiver, filter, Context.RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(qsbReceiver, filter);
+        }
+    }
+
+    public class QsbReceiver extends BroadcastReceiver {
+
+        private static final String TAG = "QsbReceiver";
+        // Action string for the broadcast intent
+        private static final String ACTION_SWITCH_TOGGLED = "com.android.display.ACTION_SWITCH_TOGGLED";
+
+        private static final String KEY_SEARCH_BAR = "qsb_search_bar";
+      //  public static final boolean GSB_ON_HOME_SCREEN = true; //Default value true
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (ACTION_SWITCH_TOGGLED.equals(intent.getAction())) {
+            boolean switchState = intent.getBooleanExtra(KEY_SEARCH_BAR, true);
+            GSB_ON_HOME_SCREEN = switchState; // Update the GSB_ON_HOME_SCREEN with the new switch state
+
+            // Save the state to SharedPreferences
+            SharedPreferences sharedPreferences = context.getSharedPreferences("QsbPrefs", Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(KEY_SEARCH_BAR, switchState).apply();
+
+        } else {
+            Log.e(TAG, "Received unexpected action: " + intent.getAction());
+            }
+        }
+    }
+
 
     /**
      * Returns {@code true} if there are visible tasks with windowing mode set to

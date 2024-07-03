@@ -515,6 +515,10 @@ public class Launcher extends StatefulActivity<LauncherState>
         qsbReceiver = new QsbReceiver();
         registerReceiver();
 
+        // Initialize the search bar state from SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("QsbPrefs", Context.MODE_PRIVATE);
+        QsbReceiver.GSB_ON_HOME_SCREEN = sharedPreferences.getBoolean(QsbReceiver.KEY_SEARCH_BAR, true);
+
         mRotationHelper = new RotationHelper(this);
         InvariantDeviceProfile idp = app.getInvariantDeviceProfile();
         initDeviceProfile(idp);
@@ -631,6 +635,11 @@ public class Launcher extends StatefulActivity<LauncherState>
         if (ACTION_SWITCH_TOGGLED.equals(intent.getAction())) {
             boolean switchState = intent.getBooleanExtra(KEY_SEARCH_BAR, true);
             GSB_ON_HOME_SCREEN = switchState; // Update the GSB_ON_HOME_SCREEN with the new switch state
+
+            // Save the state to SharedPreferences
+            SharedPreferences sharedPreferences = context.getSharedPreferences("QsbPrefs", Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(KEY_SEARCH_BAR, switchState).apply();
+
         } else {
             Log.e(TAG, "Received unexpected action: " + intent.getAction());
             }

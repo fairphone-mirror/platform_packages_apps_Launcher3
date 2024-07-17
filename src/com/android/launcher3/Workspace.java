@@ -599,7 +599,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     public void bindAndInitFirstWorkspaceScreen() {
         if ((!FeatureFlags.QSB_ON_FIRST_SCREEN
                 || !mLauncher.getIsFirstPagePinnedItemEnabled())
-                || SHOULD_SHOW_FIRST_PAGE_WIDGET) {
+                || SHOULD_SHOW_FIRST_PAGE_WIDGET
+                || !Launcher.QsbReceiver.GSB_ON_HOME_SCREEN) {
             mFirstPagePinnedItem = null;
             return;
         }

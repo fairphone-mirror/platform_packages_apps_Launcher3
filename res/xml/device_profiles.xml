@@ -135,7 +135,7 @@
             launcher:iconImageSize="57"
             launcher:iconTextSize="14.4"
             launcher:allAppsBorderSpace="16"
-            launcher:allAppsCellHeight="104"
+            launcher:allAppsCellHeight="106"
             launcher:canBeDefault="true" />
 
         <display-option

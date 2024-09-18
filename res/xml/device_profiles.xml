@@ -38,6 +38,7 @@
             launcher:allAppsCellHeight="104"
             launcher:canBeDefault="true" />
 
+        <!--FP5 Launcher 3x3 layout config -->
         <display-option
             launcher:name="Shorter Stubby"
             launcher:minWidthDps="255"
@@ -45,7 +46,7 @@
             launcher:iconImageSize="89"
             launcher:iconTextSize="13.0"
             launcher:allAppsBorderSpace="16"
-            launcher:allAppsCellHeight="104"
+            launcher:allAppsCellHeight="145"
             launcher:canBeDefault="true" />
 
     </grid-option>
@@ -93,6 +94,7 @@
             launcher:allAppsCellHeight="104"
             launcher:canBeDefault="true" />
 
+        <!--FP5 Launcher 4x4 layout config -->
         <display-option
             launcher:name="Nexus 4"
             launcher:minWidthDps="359"
@@ -100,7 +102,7 @@
             launcher:iconImageSize="66"
             launcher:iconTextSize="13.0"
             launcher:allAppsBorderSpace="16"
-            launcher:allAppsCellHeight="104"
+            launcher:allAppsCellHeight="120"
             launcher:canBeDefault="true" />
 
         <display-option
@@ -128,6 +130,7 @@
         launcher:defaultLayoutId="@xml/default_workspace_5x5"
         launcher:deviceCategory="phone|multi_display" >
 
+        <!--FP5 Launcher 5x5 layout config -->
         <display-option
             launcher:name="Large Phone"
             launcher:minWidthDps="406"

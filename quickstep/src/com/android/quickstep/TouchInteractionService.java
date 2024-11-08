@@ -105,6 +105,7 @@ import com.android.launcher3.util.PluginManagerWrapper;
 import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.util.ScreenOnTracker;
 import com.android.launcher3.util.TraceHelper;
+import com.android.launcher3.secondarydisplay.SecondarySystemUIProxy;
 import com.android.quickstep.inputconsumers.AccessibilityInputConsumer;
 import com.android.quickstep.inputconsumers.AssistantInputConsumer;
 import com.android.quickstep.inputconsumers.DeviceLockedInputConsumer;
@@ -211,6 +212,12 @@ public class TouchInteractionService extends Service {
                         bubbles, splitscreen, onehanded, shellTransitions, startingWindow,
                         recentTasks, launcherUnlockAnimationController, backAnimation, desktopMode,
                         unfoldTransition, dragAndDrop);
+                //ADD  for Desktop mode
+                SecondarySystemUIProxy.INSTANCE.get(tis).setProxy(proxy, pip,
+                        bubbles, splitscreen, onehanded, shellTransitions, startingWindow,
+                        recentTasks, launcherUnlockAnimationController, backAnimation, desktopMode,
+                        unfoldTransition, dragAndDrop);
+                //ADD  for Desktop mode
                 tis.initInputMonitor("TISBinder#onInitialize()");
                 tis.preloadOverview(true /* fromInit */);
             }));
@@ -743,6 +750,9 @@ public class TouchInteractionService extends Service {
         disposeEventHandlers("TouchInteractionService onDestroy()");
         mDeviceState.destroy();
         SystemUiProxy.INSTANCE.get(this).clearProxy();
+        //ADD  for Desktop mode
+        SecondarySystemUIProxy.INSTANCE.get(this).clearProxy();
+        //ADD  for Desktop mode
 
         mAllAppsActionManager.onDestroy();
 

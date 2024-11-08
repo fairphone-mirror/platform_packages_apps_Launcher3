@@ -195,4 +195,19 @@
     <string name="ps_container_transition" msgid="8667331812048014412">"Sperrzustand des vertraulichen Profils wird gerade geändert"</string>
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installieren"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Apps im vertraulichen Profil installieren"</string>
+    <string name="notification_center_title">Benachrichtigungszentrum</string>
+    <string name="add_to_taskbar_label">Zur Taskleiste hinzufügen</string>
+    <string name="remove_from_taskbar_lable">Von der Taskleiste entfernen</string>
+    <string name="sort_desktop_icon">Icons nach Namen sortieren</string>
+    <string name="arrange_icon">Symbol verschieben</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobile Daten</string>
+    <string name="sound_title">Ton</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="desktop_mode_title">Desktopmodus</string>
+    <string name="recents_empty_message">Keine kürzlich verwendeten Elemente</string>
+    <string name="clear_all">Alle Apps schließen</string>
+    <string name="calendar_more">Mehr</string>
+    <string name="set_wallpaper">Als Hintergrund festlegen</string>
 </resources>

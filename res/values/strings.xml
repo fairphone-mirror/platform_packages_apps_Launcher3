@@ -288,6 +288,8 @@
 
     <!-- Strings for the customization mode -->
     <!-- Text for wallpaper change button [CHAR LIMIT=30]-->
+    <string name="wallpaper_button_text">Wallpapers</string>
+    <!-- Text for wallpaper change button [CHAR LIMIT=30]-->
     <string name="styles_wallpaper_button_text">Wallpaper &amp; style</string>
     <!-- Text for edit home screen button [CHAR LIMIT=30]-->
     <string name="edit_home_screen">Edit Home Screen</string>
@@ -500,4 +502,24 @@
     <string name="ps_add_button_label">Install</string>
     <!-- Content description for install app icon -->
     <string name="ps_add_button_content_description">Install apps to Private Space</string>
+    <!--ADD  for Desktop mode-->
+    <string name="tb_clock" translatable="false">%1$s\n%2$s</string>
+    <string name="notification_center_title">Notification Center</string>
+    <string name="add_to_taskbar_label">Add to Taskbar</string>
+    <string name="remove_from_taskbar_lable">Remove from Taskbar</string>
+
+    <string name="sort_desktop_icon">Sort icons by name</string>
+    <string name="arrange_icon">Move icon</string>
+    <string name="wifi_title">Wifi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobile data</string>
+    <string name="sound_title">Sound</string>
+    <string name="screenshot_title">ScreenShot</string>
+    <string name="desktop_mode_title">Desktop mode</string>
+    <string name="recents_empty_message">No recent items</string>
+    <string name="clear_all">Clear All</string>
+    <string name="calendar_more">More</string>
+    <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="desktop_mode_off_info">Changes take effect when is reconnected</string>
+    <!--ADD  for Desktop mode-->
 </resources>

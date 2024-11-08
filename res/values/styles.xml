@@ -465,4 +465,21 @@
         <item name="android:fontFamily">google-sans-text-medium</item>
         <item name="android:ellipsize">end</item>
     </style>
+
+    <!--ADD  for Desktop mode-->
+    <style name="recent_anim">
+        <item name="android:windowEnterAnimation">@anim/recents_in</item>
+        <item name="android:windowExitAnimation">@anim/recents_out</item>
+    </style>
+
+    <style name="slidebar_anim">
+        <item name="android:windowEnterAnimation">@anim/slidebar_in</item>
+        <item name="android:windowExitAnimation">@anim/slidebar_out</item>
+    </style>
+
+    <style name="bottom_anim">
+        <item name="android:windowEnterAnimation">@anim/bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_out</item>
+    </style>
+    <!--ADD  for Desktop mode-->
 </resources>

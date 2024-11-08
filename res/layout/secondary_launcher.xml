@@ -21,14 +21,14 @@
     android:clipChildren="false"
     android:padding="@dimen/dynamic_grid_edge_margin">
 
-    <GridView
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="100dp"
         android:theme="@style/HomeScreenElementTheme"
         android:layout_gravity="center_horizontal|top"
         android:layout_margin="@dimen/dynamic_grid_edge_margin"
-        android:id="@+id/workspace_grid" />
+        android:id="@+id/workspace_layout" />
 
     <ImageButton
         android:id="@+id/all_apps_button"
@@ -37,6 +37,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="40dp"
         android:padding="16dp"
+        android:visibility="gone"
         android:src="@drawable/ic_apps"
         android:background="@drawable/bg_all_apps_button"
         android:contentDescription="@string/all_apps_button_label"
@@ -53,4 +54,15 @@
         android:layout_gravity="bottom|end"
         android:background="@drawable/round_rect_primary"
         android:visibility="invisible" />
+    <ImageView
+        android:id="@+id/iv_arrange"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="12dp"
+        android:visibility="gone"
+        android:padding="12dp"
+        android:src="@drawable/ic_arrange_done"
+        android:background="@drawable/bg_circle"/>
 </com.android.launcher3.secondarydisplay.SecondaryDragLayer>

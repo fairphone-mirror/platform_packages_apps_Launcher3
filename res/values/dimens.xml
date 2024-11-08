@@ -511,6 +511,13 @@
     <dimen name="widgets_bottom_sheet_handle_margin">24dp</dimen>
     <dimen name="bottom_sheet_handle_corner_radius">2dp</dimen>
 
+    <!--ADD  for Desktop mode-->
+    <dimen name="secondary_taskbar_icon_size">60dp</dimen>
+    <dimen name="secondary_desktop_grid_width">80dp</dimen>
+    <dimen name="wallpaperThumbnailWidth">106.5dp</dimen>
+    <dimen name="wallpaperThumbnailHeight">94.5dp</dimen>
+    <!--ADD  for Desktop mode-->
+
     <!-- State transition -->
     <item name="workspace_content_scale" format="float" type="dimen">0.97</item>
 

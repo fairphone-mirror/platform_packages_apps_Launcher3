@@ -195,4 +195,19 @@
     <string name="ps_container_transition" msgid="8667331812048014412">"Overschakelen naar privéruimte"</string>
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installeren"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Apps installeren in privégedeelte"</string>
+    <string name="notification_center_title">Berichtencentrum</string>
+    <string name="add_to_taskbar_label">Toevoegen aan taakbalk</string>
+    <string name="remove_from_taskbar_lable">Verwijderen van taakbalk</string>
+    <string name="sort_desktop_icon">Icoontjes sorteren op naam</string>
+    <string name="arrange_icon">Icoon verplaatsen</string>
+    <string name="wifi_title">Wi-Fi</string>
+    <string name="bluetooth_title">Bluetooth</string>
+    <string name="celluar_title">Mobiele data</string>
+    <string name="sound_title">Geluid</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="desktop_mode_title">Desktopmodus</string>
+    <string name="recents_empty_message">Geen recente items</string>
+    <string name="clear_all">Alles wissen</string>
+    <string name="calendar_more">Meer</string>
+    <string name="set_wallpaper">Achtergrond instellen</string>
 </resources>

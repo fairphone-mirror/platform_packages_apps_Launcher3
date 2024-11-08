@@ -56,6 +56,13 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
     public static final Comparator<AppInfo> PACKAGE_KEY_COMPARATOR = Comparator.comparingInt(
             (AppInfo a) -> a.user.hashCode()).thenComparing(ItemInfo::getTargetPackage);
 
+    //ADD  for Desktop mode
+    public static final Comparator<AppInfo> TITLE_COMPARATOR = (a, b) -> {
+        int uc = a.user.hashCode() - b.user.hashCode();
+        return uc != 0 ? uc : a.title.toString().compareTo(b.title.toString());
+    };
+    //ADD  for Desktop mode
+
     /**
      * The intent used to start the application.
      */

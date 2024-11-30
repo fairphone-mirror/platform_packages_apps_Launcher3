@@ -3,6 +3,7 @@ package com.android.launcher3.secondarydisplay.wallpaper;
 import static android.content.Context.MODE_PRIVATE;
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import static com.android.launcher3.Utilities.dpToPx;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Button;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.WindowInsets;
 
 import com.android.launcher3.R;
 import com.android.launcher3.LauncherPrefs;
@@ -88,6 +90,18 @@ public class SecondaryWallpaperPicker extends Activity implements View.OnClickLi
         LinearLayout masterWallpaperList = (LinearLayout) findViewById(R.id.master_wallpaper_list);
         masterWallpaperList.addView(
                 createTileView(masterWallpaperList, new PickImageInfo()), 0);
+        View root = findViewById(android.R.id.content);
+        root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                v.setPadding(
+                        v.getPaddingLeft(),
+                        v.getPaddingTop(),
+                        v.getPaddingRight(),
+                        v.getPaddingBottom() + dpToPx(24));
+                return insets.consumeSystemWindowInsets();
+            }
+        });
     }
 
     public ArrayList<WallpaperTileInfo> findBundledWallpapers() {

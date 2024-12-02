@@ -4265,6 +4265,10 @@ public abstract class RecentsView<CONTAINER_TYPE extends Context & RecentsViewCo
         mContainer.getStatsLogManager().logger().log(LAUNCHER_TASK_CLEAR_ALL);
     }
 
+    public void dismissAllTasks() {
+        runDismissAnimation(createAllTasksDismissAnimation(DISMISS_TASK_DURATION));
+    }
+
     private void dismissCurrentTask() {
         TaskView taskView = getNextPageTaskView();
         if (taskView != null) {
@@ -5612,6 +5616,9 @@ public abstract class RecentsView<CONTAINER_TYPE extends Context & RecentsViewCo
     }
 
     private int getLastViewIndex() {
+        //Keeps the RecentView from sliding to ClearAll for a more harmonized view
+        mDisallowScrollToClearAll = true;
+
         if (!mDisallowScrollToClearAll) {
             return indexOfChild(mClearAllButton);
         }

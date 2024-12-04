@@ -285,6 +285,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import android.os.SystemProperties;
+import android.provider.Settings;
+
 /**
  * Default launcher application.
  */
@@ -594,6 +597,16 @@ public class Launcher extends StatefulActivity<LauncherState>
                 && com.android.launcher3.Flags.enableTwoPaneLauncherSettings()) {
             RuleController.getInstance(this).setRules(
                     RuleController.parseRules(this, R.xml.split_configuration));
+        }
+
+        try {
+            if ("1".equals(SystemProperties.get("persist.sys.is_first_boot"))) {
+                Settings.Global.putStringForUser(getContentResolver(),
+                        Settings.Global.SET_BATTERY_CHARGING_MODE, "isBoot",
+                        UserHandle.myUserId());
+            }
+        }catch (Exception e){
+            Log.i(TAG,"    Exception :" + e);
         }
     }
 

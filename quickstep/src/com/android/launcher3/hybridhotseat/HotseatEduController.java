@@ -58,6 +58,7 @@ public class HotseatEduController {
 
     private ArrayList<ItemInfo> mNewItems = new ArrayList<>();
     private IntArray mNewScreens = null;
+    private boolean closeEdu = true;
 
     HotseatEduController(Launcher launcher) {
         mLauncher = launcher;
@@ -148,7 +149,11 @@ public class HotseatEduController {
     }
 
     void setPredictedApps(List<WorkspaceItemInfo> predictedApps) {
-        mPredictedApps = predictedApps;
+        if (closeEdu) {
+            mPredictedApps = null;
+        } else {
+            mPredictedApps = predictedApps;
+        }
     }
 
     void showEdu() {

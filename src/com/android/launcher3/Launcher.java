@@ -290,6 +290,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import android.os.SystemProperties;
+import android.provider.Settings;
+
 /**
  * Default launcher application.
  */
@@ -612,6 +615,16 @@ public class Launcher extends StatefulActivity<LauncherState>
                     RuleController.parseRules(this, R.xml.split_configuration));
         }
         TestEventEmitter.sendEvent(TestEvent.LAUNCHER_ON_CREATE);
+
+        try {
+            if ("1".equals(SystemProperties.get("persist.sys.is_first_boot"))) {
+                Settings.Global.putStringForUser(getContentResolver(),
+                        Settings.Global.SET_BATTERY_CHARGING_MODE, "isBoot",
+                        UserHandle.myUserId());
+            }
+        } catch (Exception e){
+            Log.i(TAG,"    Exception :" + e);
+        }
     }
 
     protected ModelCallbacks createModelCallbacks() {

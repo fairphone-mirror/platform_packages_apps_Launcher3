@@ -199,7 +199,7 @@
     <string name="add_to_taskbar_label">Aggiungi alla Taskbar</string>
     <string name="remove_from_taskbar_lable">Rimuovi dalla Taskbar</string>
     <string name="sort_desktop_icon">Ordina icone per nome</string>
-    <string name="arrange_icon">"Muovi l'icona"</string>
+    <string name="arrange_icon">"Icona Sposta"</string>
     <string name="wifi_title">Wi-Fi</string>
     <string name="bluetooth_title">Bluetooth</string>
     <string name="celluar_title">Dati mobili</string>

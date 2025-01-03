@@ -631,7 +631,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     void setupHeader() {
-        mHeader.setVisibility(View.VISIBLE);
+        if (!isSearching()) {
+            mHeader.setVisibility(View.VISIBLE);
+        }
         boolean tabsHidden = !mUsingTabs;
         mHeader.setup(
                 mAH.get(AdapterHolder.MAIN).mRecyclerView,

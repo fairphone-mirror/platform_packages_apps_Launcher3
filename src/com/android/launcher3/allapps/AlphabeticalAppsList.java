@@ -117,6 +117,7 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
     private int mNumAppsPerRowAllApps;
     private int mNumAppRowsInAdapter;
     private Predicate<ItemInfo> mItemFilter;
+    private static final String LIST_OF_APPS_NOT_DISPLAYED = "com.google.android.apps.messaging;com.google.android.dialer";
 
     public AlphabeticalAppsList(Context context, @Nullable AllAppsStore<T> appsStore,
             WorkProfileManager workProfileManager, PrivateProfileManager privateProfileManager) {
@@ -246,6 +247,9 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
 
         Stream<AppInfo> appSteam = Stream.of(mAllAppsStore.getApps());
         Stream<AppInfo> privateAppStream = Stream.of(mAllAppsStore.getApps());
+
+        privateAppStream = privateAppStream
+                .filter(item -> !LIST_OF_APPS_NOT_DISPLAYED.contains(item.getTargetComponent().getPackageName()));
 
         if (!hasSearchResults() && mItemFilter != null) {
             appSteam = appSteam.filter(mItemFilter);

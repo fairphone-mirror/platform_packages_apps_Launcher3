@@ -121,6 +121,14 @@ public class PackageUpdatedTask implements ModelUpdateTask {
             Log.d(TAG, "Package updated: mOp=" + getOpString()
                     + " packages=" + Arrays.toString(packages));
         }
+
+        UserManager um = (UserManager) context.getSystemService(Context.USER_SERVICE);
+        final boolean isWorkProfile = um.isManagedProfile(mUser.getIdentifier());
+
+        if (isWorkProfile) {
+            appsList.removePackage("com.android.settings", mUser);
+        }
+
         switch (mOp) {
             case OP_ADD: {
                 for (int i = 0; i < N; i++) {

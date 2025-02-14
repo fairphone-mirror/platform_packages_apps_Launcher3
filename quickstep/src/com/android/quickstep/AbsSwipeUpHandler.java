@@ -2559,6 +2559,9 @@ public abstract class AbsSwipeUpHandler<T extends RecentsViewContainer,
         SurfaceControl.Transaction transaction = surfaceTransaction.getTransaction();
 
         for (RemoteAnimationTarget app : targets.apps) {
+            if (app.leash == null || !app.leash.isValid()) {
+                continue;
+            }
             transaction.setAlpha(app.leash, 1f - fadeProgress);
             transaction.setPosition(app.leash,
                     /* x= */ app.startBounds.left

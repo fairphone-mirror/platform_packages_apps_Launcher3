@@ -269,6 +269,9 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
         } else {
             Rect portraitInsets = dp.getInsets();
             DisplayController displayController = DisplayController.INSTANCE.get(context);
+            if (displayController.getInfo().getCurrentBounds() == null) {
+                return;
+            }
             Rect deviceRotationInsets = displayController.getInfo().getCurrentBounds().get(
                     orientationHandler.getRotation()).insets;
             // Obtain the landscape/seascape insets, and rotate it to portrait perspective.

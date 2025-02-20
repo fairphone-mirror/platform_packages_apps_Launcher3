@@ -53,7 +53,7 @@
 
     <grid-option
         launcher:name="4_by_4"
-        launcher:numRows="4"
+        launcher:numRows="5"
         launcher:numColumns="4"
         launcher:numFolderRows="3"
         launcher:numFolderColumns="4"

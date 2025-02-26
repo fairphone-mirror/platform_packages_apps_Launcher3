@@ -115,6 +115,8 @@ public class InvariantDeviceProfile implements SafeCloseable {
     private static final String RES_GRID_NUM_COLUMNS = "grid_num_columns";
     private static final String RES_GRID_ICON_SIZE_DP = "grid_icon_size_dp";
 
+    private static final String DEFAULT_GRID_NAME = "4_by_5";
+
     /**
      * Number of icons per row and column in the workspace.
      */
@@ -338,6 +340,10 @@ public class InvariantDeviceProfile implements SafeCloseable {
     private String initGrid(Context context, String gridName) {
         Info displayInfo = DisplayController.INSTANCE.get(context).getInfo();
         @DeviceType int deviceType = displayInfo.getDeviceType();
+
+        if(gridName == null){
+            gridName = DEFAULT_GRID_NAME;
+        }
 
         ArrayList<DisplayOption> allOptions =
                 getPredefinedDeviceProfiles(context, gridName, deviceType,

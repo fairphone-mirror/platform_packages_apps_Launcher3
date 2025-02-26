@@ -137,6 +137,8 @@ public class InvariantDeviceProfile {
     private static final String RES_GRID_NUM_COLUMNS = "grid_num_columns";
     private static final String RES_GRID_ICON_SIZE_DP = "grid_icon_size_dp";
 
+    private static final String DEFAULT_GRID_NAME = "4_by_5";
+
     private final DisplayController mDisplayController;
     private final WindowManagerProxy mWMProxy;
     private final LauncherPrefs mPrefs;
@@ -314,6 +316,11 @@ public class InvariantDeviceProfile {
 
     private String initGrid(Context context, String gridName) {
         Info displayInfo = mDisplayController.getInfo();
+
+        if(gridName == null){
+            gridName = DEFAULT_GRID_NAME;
+        }
+
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
                 context,
                 gridName,

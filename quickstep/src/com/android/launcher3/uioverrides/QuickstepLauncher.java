@@ -221,9 +221,13 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import com.android.launcher3.LauncherPrefs;
+import static com.android.launcher3.LauncherPrefs.ALL_APP_PREDICTION_SHOW;
+import android.content.SharedPreferences;
 
 public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
-        SystemShortcut.BubbleActivityStarter {
+        SystemShortcut.BubbleActivityStarter,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     private static final boolean TRACE_LAYOUTS =
             SystemProperties.getBoolean("persist.debug.trace_layouts", false);
     private static final String TRACE_RELAYOUT_CLASS =
@@ -538,13 +542,34 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if (LauncherPrefs.ALL_APP_PREDICTION_SHOW.getSharedPrefKey().equals(s)) {
+            boolean AllAppsPredictionshow = LauncherPrefs.get(this).get(ALL_APP_PREDICTION_SHOW);
+            if(AllAppsPredictionshow){
+                PredictionRowView<?> predictionRowView =
+                        getAppsView().getFloatingHeaderView().findFixedRowByType(
+                                PredictionRowView.class);
+                predictionRowView.setPredictedApps(mAllAppsPredictions.items);
+            }else{
+                PredictionRowView<?> predictionRowView =
+                        getAppsView().getFloatingHeaderView().findFixedRowByType(
+                                PredictionRowView.class);
+                predictionRowView.resetPrediction();
+            }
+        }
+    }
+
+    @Override
     public void bindExtraContainerItems(FixedContainerItems item) {
         if (item.containerId == Favorites.CONTAINER_PREDICTION) {
             mAllAppsPredictions = item;
-            PredictionRowView<?> predictionRowView =
-                    getAppsView().getFloatingHeaderView().findFixedRowByType(
-                            PredictionRowView.class);
-            predictionRowView.setPredictedApps(item.items);
+            boolean AllAppsPredictionshow = LauncherPrefs.get(this).get(ALL_APP_PREDICTION_SHOW);
+            if(AllAppsPredictionshow){
+                PredictionRowView<?> predictionRowView =
+                        getAppsView().getFloatingHeaderView().findFixedRowByType(
+                                PredictionRowView.class);
+                predictionRowView.setPredictedApps(item.items);
+            }
         } else if (item.containerId == Favorites.CONTAINER_HOTSEAT_PREDICTION) {
             mHotseatPredictionController.setPredictedItems(item);
         } else if (item.containerId == Favorites.CONTAINER_WIDGETS_PREDICTION) {
@@ -592,6 +617,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         mHotseatPredictionController.destroy();
         if (mViewCapture != null) mViewCapture.close();
         removeBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
+        LauncherPrefs.get(this).removeListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override
@@ -716,6 +742,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         View.setTracedRequestLayoutClassClass(TRACE_RELAYOUT_CLASS);
         OverviewComponentObserver.INSTANCE.get(this)
                 .addOverviewChangeListener(mOverviewChangeListener);
+        LauncherPrefs.get(this).addListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override

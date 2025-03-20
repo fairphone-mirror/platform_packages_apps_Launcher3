@@ -549,4 +549,6 @@
     <!-- Content description for install app icon -->
     <string name="ps_add_button_content_description">Install apps to Private Space</string>
     <string name="ps_app_content_description">Add files and more to Private Space</string>
+
+    <string name="all_app_prediction_title">Suggestions in all apps list</string>
 </resources>

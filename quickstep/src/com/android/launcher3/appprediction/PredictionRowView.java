@@ -205,6 +205,12 @@ public class PredictionRowView<T extends Context & ActivityContext>
         applyPredictionApps();
     }
 
+    public void resetPrediction(){
+        mPredictedApps.clear();
+        removeAllViews();
+        applyPredictionApps();
+    }
+
     /** Pause the prediction row UI update */
     public void setPredictionUiUpdatePaused(boolean predictionUiUpdatePaused) {
         mPredictionUiUpdatePaused = predictionUiUpdatePaused;

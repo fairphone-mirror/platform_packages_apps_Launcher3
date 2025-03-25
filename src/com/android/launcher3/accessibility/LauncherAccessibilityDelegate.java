@@ -21,6 +21,8 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.os.SystemProperties;
+import android.provider.Settings;
 
 import androidx.annotation.Nullable;
 
@@ -80,6 +82,8 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected static final int MOVE_TO_WORKSPACE = R.id.action_move_to_workspace;
     protected static final int RESIZE = R.id.action_resize;
     public static final int DEEP_SHORTCUTS = R.id.action_deep_shortcuts;
+    private static final String[][] operatorAppPackageListForOrange = new String[][]{{"com.orange.update","0","1","4"}};
+    private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
 
     public LauncherAccessibilityDelegate(Launcher launcher) {
         super(launcher);
@@ -351,18 +355,36 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         Workspace<?> workspace = mContext.getWorkspace();
         IntArray workspaceScreens = workspace.getScreenOrder();
         int screenId;
-
+        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+        String operatorAppList = Settings.Secure.getString(mContext.getContentResolver(), OPERATOR_APP_LIST_KEY);
+        boolean isOrangeOperator = ("20801".equals(mccmnc) || "20610".equals(mccmnc) || "21403".equals(mccmnc))
+            && !operatorAppList.contains(operatorAppPackageListForOrange[0][0]);
         // First check if there is space on the current screen.
         int screenIndex = workspace.getCurrentPage();
         screenId = workspaceScreens.get(screenIndex);
         CellLayout layout = (CellLayout) workspace.getPageAt(screenIndex);
-
         boolean found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+
+        if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+            if (screenId == 0) {
+                found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
+            } else {
+                found = layout.findCellForSpan(outCoordinates,Integer.valueOf(0)/*cellX*/,Integer.valueOf(0)/*cellY*/, info.spanX, info.spanY);
+            }
+        }
+
         screenIndex = 0;
         while (!found && screenIndex < workspaceScreens.size()) {
             screenId = workspaceScreens.get(screenIndex);
             layout = (CellLayout) workspace.getPageAt(screenIndex);
             found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+            if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+                if (screenId == 0) {
+                    found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
+                } else {
+                    found = layout.findCellForSpan(outCoordinates,Integer.valueOf(0)/*cellX*/,Integer.valueOf(0)/*cellY*/, info.spanX, info.spanY);
+                }
+            }
             screenIndex++;
         }
 
@@ -380,7 +402,13 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         screenId = emptyScreenIds.getArray().get(0);
         layout = workspace.getScreenWithId(screenId);
         found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
-
+        if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+            if (screenId == 0) {
+                found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
+            } else {
+                found = layout.findCellForSpan(outCoordinates,Integer.valueOf(0)/*cellX*/,Integer.valueOf(0)/*cellY*/, info.spanX, info.spanY);
+            }
+        }
         if (!found) {
             Log.wtf(TAG, "Not enough space on an empty screen");
         }

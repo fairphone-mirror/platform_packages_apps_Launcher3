@@ -22,7 +22,11 @@ import android.content.Intent;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
+import android.os.SystemProperties;
 import android.os.UserHandle;
+
+import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.text.TextUtils;
 
 import androidx.annotation.WorkerThread;
@@ -44,6 +48,12 @@ public class SessionCommitReceiver extends BroadcastReceiver {
 
     // Preference key for automatically adding icon to homescreen.
     public static final String ADD_ICON_PREFERENCE_KEY = "pref_add_icon_to_home";
+    private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
+    // Operator AppList Configuration {PackageName,Screen,X,Y}
+    // Naming convention operatorAppPackageList + mcc + mcn
+    private static final String[][] operatorAppPackageListForOrange = new String[][]{{"com.orange.update","0","1","4"}};
+    private static final String ORANGE_APP_INSTALLED = "def_operator_app_installed";
+    private static final String ORANGE_WIDGET_PREFERENCES = "orange_widget_preferences";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -63,6 +73,34 @@ public class SessionCommitReceiver extends BroadcastReceiver {
                 || info == null || user == null) {
             // Invalid intent.
             return;
+        }
+
+        boolean isOrangeOperatorApp = false;
+        String operatorAppList = Settings.Secure.getString(context.getContentResolver(), OPERATOR_APP_LIST_KEY);
+        String[] operatorAppArray = null;
+        if (operatorAppList != null) {
+            operatorAppArray = operatorAppList.split(",");
+        }
+        String mccmnc = SystemProperties.get("persist.ril.sim.mcc.mnc");
+
+        if ("20801".equals(mccmnc) || "20610".equals(mccmnc) || "21403".equals(mccmnc)) {
+            for (int i = 0; i < operatorAppPackageListForOrange.length; i++) {
+                if (info.getAppPackageName().equals(operatorAppPackageListForOrange[i][0])) {
+                    isOrangeOperatorApp = true;
+                    if (operatorAppArray != null) {
+                        for (int j =0;j < operatorAppArray.length; j++) {
+                            if (info.getAppPackageName().equals(operatorAppArray[j])) {
+                                isOrangeOperatorApp = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (isOrangeOperatorApp) {
+            SharedPreferences mSharedPreferences = context.getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
+            boolean isCommit = mSharedPreferences.edit().putBoolean(ORANGE_APP_INSTALLED,true).commit();
         }
 
         InstallSessionHelper packageInstallerCompat = InstallSessionHelper.INSTANCE.get(context);

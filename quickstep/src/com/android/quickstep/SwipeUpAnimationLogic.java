@@ -486,6 +486,10 @@ public abstract class SwipeUpAnimationLogic implements
             float scale = Math.min(currentRect.width(), currentRect.height())
                     / Math.min(width, height);
 
+            if(Float.isNaN(scale)){
+                return;
+            }
+
             mTargetTaskView.setScaleX(scale);
             mTargetTaskView.setScaleY(scale);
             mTargetTaskView.setTranslationX(

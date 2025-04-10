@@ -512,12 +512,16 @@ public abstract class SwipeUpAnimationLogic implements
                 return;
             }
 
-            mTargetTaskView.setScaleX(scale);
-            mTargetTaskView.setScaleY(scale);
-            mTargetTaskView.setTranslationX(
-                    currentRect.centerX() - mThumbnailStartBounds.centerX());
-            mTargetTaskView.setTranslationY(
-                    currentRect.centerY() - mThumbnailStartBounds.centerY());
+            try{
+                mTargetTaskView.setScaleX(scale);
+                mTargetTaskView.setScaleY(scale);
+                mTargetTaskView.setTranslationX(
+                        currentRect.centerX() - mThumbnailStartBounds.centerX());
+                mTargetTaskView.setTranslationY(
+                        currentRect.centerY() - mThumbnailStartBounds.centerY());
+            }catch (IllegalArgumentException e) {
+                //do nothing
+            }
         }
 
         @Override

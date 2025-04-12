@@ -2671,6 +2671,10 @@ public abstract class AbsSwipeUpHandler<
                 transformParams.createSurfaceParams(taskViewSimulator);
         SurfaceControl.Transaction transaction = surfaceTransaction.getTransaction();
 
+        if(transaction == null){
+            return false;
+        }
+
         for (RemoteAnimationTarget app : targets.apps) {
             transaction.setAlpha(app.leash, 1f - fadeProgress);
             transaction.setPosition(app.leash,

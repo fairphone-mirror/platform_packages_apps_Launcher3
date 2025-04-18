@@ -6,6 +6,7 @@ import android.os.Trace
 import android.util.Log
 import androidx.annotation.UiThread
 import com.android.launcher3.Flags.enableSmartspaceRemovalToggle
+import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherConstants.TraceEvents
 import com.android.launcher3.Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET
 import com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID
@@ -392,6 +393,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             .filterNot { screenId ->
                 isFirstPagePinnedItemEnabled &&
                     !SHOULD_SHOW_FIRST_PAGE_WIDGET &&
+                    Launcher.QsbReceiver.GSB_ON_HOME_SCREEN &&
                     screenId == WorkspaceLayoutManager.FIRST_SCREEN_ID
             }
             .forEach { screenId ->

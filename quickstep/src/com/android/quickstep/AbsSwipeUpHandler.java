@@ -2671,21 +2671,21 @@ public abstract class AbsSwipeUpHandler<
                 transformParams.createSurfaceParams(taskViewSimulator);
         SurfaceControl.Transaction transaction = surfaceTransaction.getTransaction();
 
-        if(transaction == null){
+        try {
+            for (RemoteAnimationTarget app : targets.apps) {
+                transaction.setAlpha(app.leash, 1f - fadeProgress);
+                transaction.setPosition(app.leash,
+                        /* x= */ app.startBounds.left
+                                + (mContainer.getDeviceProfile().overviewPageSpacing
+                                * (mRecentsView.isRtl() ? fadeProgress : -fadeProgress)),
+                        /* y= */ 0f);
+                transaction.setScale(app.leash, 1f, 1f);
+                taskViewSimulator.taskPrimaryTranslation.value =
+                        mRecentsView.getScrollOffsetForKeyboardTaskFocus();
+                taskViewSimulator.apply(transformParams, surfaceTransaction);
+            }
+        }catch (NullPointerException e){
             return false;
-        }
-
-        for (RemoteAnimationTarget app : targets.apps) {
-            transaction.setAlpha(app.leash, 1f - fadeProgress);
-            transaction.setPosition(app.leash,
-                    /* x= */ app.startBounds.left
-                            + (mContainer.getDeviceProfile().overviewPageSpacing
-                            * (mRecentsView.isRtl() ? fadeProgress : -fadeProgress)),
-                    /* y= */ 0f);
-            transaction.setScale(app.leash, 1f, 1f);
-            taskViewSimulator.taskPrimaryTranslation.value =
-                    mRecentsView.getScrollOffsetForKeyboardTaskFocus();
-            taskViewSimulator.apply(transformParams, surfaceTransaction);
         }
         return true;
     }

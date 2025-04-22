@@ -232,6 +232,8 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
     private static final String ORANGE_APP_INSTALLED = "def_operator_app_installed";
     private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
     private static final String ORANGE_WIDGET_PREFERENCES = "orange_widget_preferences";
+    //Unlock the delay between the launcher and the start of the widget resolution to prevent the resolution from being unsuccessful due to the fact that the launcher is not yet displayed
+    private static final long DELAY_MILLIS = 500;
 
     private static final String[][] operatorAppPackageListForOrange = new String[][]{{"com.orange.update","0","1","4"}};
 
@@ -1020,7 +1022,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
         SharedPreferences mSharedPreferences = asContext().getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
         boolean isOrangeAppInstalled = mSharedPreferences.getBoolean(ORANGE_APP_INSTALLED,false);
         if (isOrangeAppInstalled) {
-            handler.postDelayed(task,2000);
+            handler.postDelayed(task,DELAY_MILLIS);
         }
     }
 

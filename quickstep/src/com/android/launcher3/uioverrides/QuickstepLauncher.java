@@ -614,6 +614,14 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
             }
 
         }
+        boolean isStateToNormal = (getStateManager().getState() == NORMAL);
+        if (isStateToNormal) {
+            SharedPreferences mSharedPreferences = asContext().getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
+            boolean isOrangeAppInstalled = mSharedPreferences.getBoolean(ORANGE_APP_INSTALLED,false);
+            if (isOrangeApp() && isOrangeAppInstalled) {
+                checkAppAndFindSpaceOnWorkspace();
+            }
+        }
     }
 
     @Override
@@ -792,7 +800,6 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
     @Override
     protected void onResume() {
         super.onResume();
-
         if (mLauncherUnfoldAnimationController != null) {
             mLauncherUnfoldAnimationController.onResume();
         }
@@ -1017,8 +1024,6 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
     protected void onDeferredResumed() {
         super.onDeferredResumed();
         handlePendingActivityRequest();
-        String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
-        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
         SharedPreferences mSharedPreferences = asContext().getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
         boolean isOrangeAppInstalled = mSharedPreferences.getBoolean(ORANGE_APP_INSTALLED,false);
         if (isOrangeAppInstalled) {
@@ -1030,12 +1035,13 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
     private Runnable task = new Runnable(){
         @Override
         public void run(){
-            setOrangeWidget();
+            if (isOrangeApp()) {
+                checkAppAndFindSpaceOnWorkspace();
+            }
         }
     };
 
-    private void setOrangeWidget(){
-        boolean isOperatorApp = false;
+    private boolean isOrangeApp() {
         String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
         String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
         //mcc:208 mcn:01;mcc:206 mcn:10;mcc:214 mcn:03
@@ -1043,28 +1049,30 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
         if(("20801".equals(mccmnc) || "20610".equals(mccmnc) || "21403".equals(mccmnc)) && !operatorAppList.contains(operatorAppPackageListForOrange[0][0])){
             isOrangeApp = true;
         }
-        if (isOrangeApp) {
-            WidgetManagerHelper widgetManager = new WidgetManagerHelper(getApplicationContext());
-            for (AppWidgetProviderInfo widgetInfo : widgetManager.getAllProviders(null)) {
-                LauncherAppWidgetProviderInfo launcherWidgetInfo =
-                        LauncherAppWidgetProviderInfo.fromProviderInfo(getApplicationContext(), widgetInfo);
-                if (widgetInfo.provider.toString().contains("com.orange.update.widget.ComboFolderWidgetProvider")) {
-                    PendingAddWidgetInfo mPendingAddWidgetInfo = new PendingAddWidgetInfo(launcherWidgetInfo,Favorites.CONTAINER_DESKTOP);
-                    getAccessibilityDelegate().addToWorkspace(mPendingAddWidgetInfo,
-                        /*accessibility=*/ false,
-                        /*finishCallback=*/ (success) -> {
-                        String operatorAppListCallback = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
-                        boolean has = false;
-                        if (operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
-                            has = true;
-                        }
-                        if (!has) {
-                            operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
-                            boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
-                            android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);
-                        }
-                    });
-                }
+        return isOrangeApp;
+    }
+
+    private void checkAppAndFindSpaceOnWorkspace() {
+        WidgetManagerHelper widgetManager = new WidgetManagerHelper(getApplicationContext());
+        for (AppWidgetProviderInfo widgetInfo : widgetManager.getAllProviders(null)) {
+            LauncherAppWidgetProviderInfo launcherWidgetInfo =
+                    LauncherAppWidgetProviderInfo.fromProviderInfo(getApplicationContext(), widgetInfo);
+            if (widgetInfo.provider.toString().contains("com.orange.update.widget.ComboFolderWidgetProvider")) {
+                PendingAddWidgetInfo mPendingAddWidgetInfo = new PendingAddWidgetInfo(launcherWidgetInfo,Favorites.CONTAINER_DESKTOP);
+                getAccessibilityDelegate().addToWorkspace(mPendingAddWidgetInfo,
+                    /*accessibility=*/ false,
+                    /*finishCallback=*/ (success) -> {
+                    String operatorAppListCallback = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+                    boolean has = false;
+                    if (operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
+                        has = true;
+                    }
+                    if (!has) {
+                        operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
+                        boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
+                        android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);
+                    }
+                });
             }
         }
     }

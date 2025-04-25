@@ -150,6 +150,8 @@ import java.lang.ref.WeakReference;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
 
 /**
  * Service connected by system-UI for handling touch interaction.
@@ -1269,7 +1271,8 @@ public class TouchInteractionService extends Service {
                 && runningTask.isHomeTask()
                 && mOverviewComponentObserver.isHomeAndOverviewSame()
                 && !launcherResumedThroughShellTransition
-                && !previousGestureState.isRecentsAnimationRunning();
+                && !previousGestureState.isRecentsAnimationRunning()
+                && isLauncherTopActivity();
 
         if (gestureState.getContainerInterface().isInLiveTileMode()) {
             return createOverviewInputConsumer(
@@ -1307,6 +1310,21 @@ public class TouchInteractionService extends Service {
                     .append("using OtherActivityInputConsumer");
             return createOtherActivityInputConsumer(gestureState, event);
         }
+    }
+
+    private boolean isLauncherTopActivity(){
+        RunningTaskInfo task = mAM.getRunningTask();
+        ComponentName cn = null;
+        if (task != null){
+            cn = task.topActivity;
+        }
+        if (cn != null) {
+            String pkgname = cn.getPackageName();
+            if("com.android.launcher3".equals(pkgname)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public AbsSwipeUpHandler.Factory getSwipeUpHandlerFactory() {

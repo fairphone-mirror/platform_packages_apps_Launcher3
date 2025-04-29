@@ -430,6 +430,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     public boolean shouldContainerScroll(MotionEvent ev) {
+        // clearFocus and hideKeyboard
+        mSearchContainer.clearFocus();
+        mActivityContext.hideKeyboard();
         BaseDragLayer dragLayer = mActivityContext.getDragLayer();
         // IF the MotionEvent is inside the search box or handle area, and the container keeps on
         // receiving touch input, container should move down.

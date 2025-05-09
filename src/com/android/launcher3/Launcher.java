@@ -2128,11 +2128,14 @@ public class Launcher extends StatefulActivity<LauncherState>
     private void startMyFairphone(){
         if (isMyPhoneFirstOpen() && isDtCarrier()) {
             setMyPhoneOpened();
-            Intent launchIntent = new Intent(Intent.ACTION_MAIN);
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
-            launchIntent.setComponent(cn);
-            startActivity(launchIntent);
+            try{
+                Intent launchIntent = new Intent(Intent.ACTION_MAIN);
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
+                launchIntent.setComponent(cn);
+                startActivity(launchIntent);
+            } catch (Exception e) {
+            }
         }
     }
 

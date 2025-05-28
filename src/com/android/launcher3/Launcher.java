@@ -1696,7 +1696,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
         TraceHelper.INSTANCE.beginSection(ON_NEW_INTENT_EVT);
         super.onNewIntent(intent);
-
+        hideKeyboard();
         boolean alreadyOnHome = hasWindowFocus() && ((intent.getFlags() &
                 Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
                 != Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);

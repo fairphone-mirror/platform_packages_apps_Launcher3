@@ -218,4 +218,6 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installa"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Installa le app su spazi privati"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Aggiungi file e altro allo spazio privato"</string>
+
+    <string name="all_app_prediction_title">"Suggerimenti nell'elenco di tutte le app"</string>
 </resources>

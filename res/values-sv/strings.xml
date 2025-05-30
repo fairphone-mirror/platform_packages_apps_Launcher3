@@ -195,4 +195,6 @@
     <string name="ps_container_transition" msgid="8667331812048014412">"Överföring av privat rum"</string>
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installera"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Installera appar i privat rum"</string>
+
+    <string name="all_app_prediction_title">"Förslag i listan över alla appar"</string>
 </resources>

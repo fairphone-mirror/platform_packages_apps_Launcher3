@@ -1094,8 +1094,8 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                     if (operatorAppListCallback != null && operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
                         has = true;
                     }
-                    android.util.Log.d(TAG, "The operator app add to workspace finishCallback,success:"+success+"    saved:"+has);
-                    if (!has && success) {
+                    android.util.Log.d(TAG, "The operator app add to workspace saved:"+has);
+                    if (!has) {
                         operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
                         boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
                         android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);

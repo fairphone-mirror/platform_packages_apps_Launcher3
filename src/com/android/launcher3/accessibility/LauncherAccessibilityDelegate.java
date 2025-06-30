@@ -363,6 +363,10 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
 
         // First check if there is space on the current screen.
         int screenIndex = workspace.getCurrentPage();
+        if (workspaceScreens.size() == 0) {
+            Log.wtf(TAG, "The number of workspace screens is 0, execution interrupted.");
+            return -1;
+        }
         screenId = workspaceScreens.get(screenIndex);
         CellLayout layout = (CellLayout) workspace.getPageAt(screenIndex);
 

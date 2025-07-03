@@ -1043,6 +1043,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
 
     private boolean isOrangeApp() {
         String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+        if (operatorAppList == null) {
+            operatorAppList ="";
+        }
         String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
         //mcc:208 mcn:01;mcc:206 mcn:10;mcc:214 mcn:03
         boolean isOrangeApp = false;
@@ -1063,6 +1066,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer 
                     /*accessibility=*/ false,
                     /*finishCallback=*/ (success) -> {
                     String operatorAppListCallback = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+                    if (operatorAppListCallback == null) {
+                        operatorAppListCallback ="";
+                    }
                     boolean has = false;
                     if (operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
                         has = true;

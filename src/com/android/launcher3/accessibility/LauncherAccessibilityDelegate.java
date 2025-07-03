@@ -357,6 +357,9 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         int screenId;
         String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
         String operatorAppList = Settings.Secure.getString(mContext.getContentResolver(), OPERATOR_APP_LIST_KEY);
+        if (operatorAppList == null) {
+            operatorAppList ="";
+        }
         boolean isOrangeOperator = ("20801".equals(mccmnc) || "20610".equals(mccmnc) || "21403".equals(mccmnc))
             && !operatorAppList.contains(operatorAppPackageListForOrange[0][0]);
         // First check if there is space on the current screen.

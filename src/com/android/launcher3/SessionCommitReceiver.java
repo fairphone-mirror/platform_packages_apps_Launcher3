@@ -77,6 +77,9 @@ public class SessionCommitReceiver extends BroadcastReceiver {
 
         boolean isOrangeOperatorApp = false;
         String operatorAppList = Settings.Secure.getString(context.getContentResolver(), OPERATOR_APP_LIST_KEY);
+        if (operatorAppList == null) {
+            operatorAppList ="";
+        }
         String[] operatorAppArray = null;
         if (operatorAppList != null) {
             operatorAppArray = operatorAppList.split(",");

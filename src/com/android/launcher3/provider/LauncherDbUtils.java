@@ -69,6 +69,21 @@ public class LauncherDbUtils {
         return out;
     }
 
+    public static boolean queryWidgetIsInDB(SQLiteDatabase db, String tableName,
+            String columnName, String selection,String appWidgetProvider) {
+        boolean hasAppWidgetInDB = false;
+        try (Cursor c = db.query(false, tableName, new String[] { columnName }, selection, null,
+                null, null, null, null)) {
+            while (c.moveToNext()) {
+                String appWidgetProviderFromDB = c.getString(0);
+                if (appWidgetProviderFromDB != null && appWidgetProviderFromDB.contains(appWidgetProvider)) {
+                    hasAppWidgetInDB = true;
+                }
+            }
+        }
+        return hasAppWidgetInDB;
+    }
+
     public static boolean tableExists(SQLiteDatabase db, String tableName) {
         try (Cursor c = db.query(true, "sqlite_master", new String[] {"tbl_name"},
                 "tbl_name = ?", new String[] {tableName},

@@ -136,6 +136,8 @@ import com.android.launcher3.logging.StatsLogManager.StatsLogger;
 import com.android.launcher3.model.BgDataModel.FixedContainerItems;
 import com.android.launcher3.model.WellbeingModel;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.ModelDbController;
+import com.android.launcher3.provider.LauncherDbUtils;
 import com.android.launcher3.popup.SystemShortcut;
 import com.android.launcher3.proxy.ProxyActivityStarter;
 import com.android.launcher3.statehandlers.DepthController;
@@ -1119,7 +1121,46 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         }
     };
 
+    private int circulate = 0;
+    private Runnable dbTask = new Runnable(){
+        @Override
+        public void run(){
+            if (isWidgetInDB()) {
+                circulate = 0;
+                handler.removeCallbacks(dbTask);
+                String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+                if (operatorAppList != null && !operatorAppList.contains("com.orange.update")) {
+                    boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,"com.orange.update");
+                    android.util.Log.d(TAG, "DBtask Save the Operator App widget isSaveSuccesses:"+isSaveSuccesses);
+                }
+                return;
+            }
+            circulate++;
+            if (circulate < 10) {
+                handler.postDelayed(dbTask,100);
+            } else {
+                circulate = 0;
+                handler.removeCallbacks(dbTask);
+            }
+        }
+    };
+
+    private boolean isWidgetInDB(){
+        ModelDbController mModelDbController  = new ModelDbController(getApplicationContext());
+        boolean isWidgetInDB = LauncherDbUtils.queryWidgetIsInDB(mModelDbController.getDb(),Favorites.TABLE_NAME,
+            Favorites.APPWIDGET_PROVIDER,Favorites.ITEM_TYPE+" = "+Favorites.ITEM_TYPE_APPWIDGET,"com.orange.update.widget.ComboFolderWidgetProvider");
+        android.util.Log.d(TAG, "The information about the app widget already stored in the database:"+isWidgetInDB);
+        return isWidgetInDB;
+    }
+
     private boolean isOrangeApp() {
+        if (isWidgetInDB()) {
+            String savedAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+            if (savedAppList != null && !savedAppList.contains(operatorAppPackageListForOrange[0][0])) {
+                boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,"com.orange.update");
+                android.util.Log.d(TAG, "Save the Operator AppWidgetProvider because the db has the appwidget data, isSaveSuccesses:"+isSaveSuccesses);
+            }
+        }
         String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
         String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
         //mcc:208 mcn:01;mcc:206 mcn:10;mcc:214 mcn:03
@@ -1146,11 +1187,17 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                     if (operatorAppListCallback != null && operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
                         has = true;
                     }
-                    android.util.Log.d(TAG, "The operator app add to workspace saved:"+has);
+                    android.util.Log.d(TAG, "The operator app add to workspace saved:"+has+"    is widgetinfo in DB:"+isWidgetInDB());
                     if (!has) {
-                        operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
-                        boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
-                        android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);
+                        if (isWidgetInDB()) {
+                            operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
+                            boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
+                            android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);
+                        } else {
+                            if (circulate == 0) {
+                                handler.postDelayed(dbTask,100);
+                            }
+                        }
                     }
                 });
             }

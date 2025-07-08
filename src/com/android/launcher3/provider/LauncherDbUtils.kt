@@ -90,6 +90,37 @@ object LauncherDbUtils {
     }
 
     @JvmStatic
+    fun queryWidgetIsInDB(
+        db: SQLiteDatabase,
+        tableName: String,
+        columnName: String,
+        selection: String?,
+        appWidgetProvider: String,
+    ): Boolean {
+        var hasAppWidgetInDB = false;
+        db.query(
+                false,
+                tableName,
+                arrayOf(columnName),
+                selection,
+                null,
+                null,
+                null,
+                null,
+                null,
+            )
+            .use { c ->
+                while (c.moveToNext()) {
+                    val appWidgetProviderFromDB = c.getString(0);
+                    if (appWidgetProviderFromDB != null && appWidgetProviderFromDB.contains(appWidgetProvider)) {
+                        hasAppWidgetInDB = true
+                    }
+                }
+            }
+        return hasAppWidgetInDB
+    }
+
+    @JvmStatic
     fun tableExists(db: SQLiteDatabase, tableName: String): Boolean =
         db.query(
                 /* distinct = */ true,

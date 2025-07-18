@@ -617,7 +617,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         mHotseatPredictionController.destroy();
         if (mViewCapture != null) mViewCapture.close();
         removeBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
-        LauncherPrefs.get(this).removeListener(this, ALL_APP_PREDICTION_SHOW);
+        //LauncherPrefs.get(this).removeListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override
@@ -742,7 +742,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         View.setTracedRequestLayoutClassClass(TRACE_RELAYOUT_CLASS);
         OverviewComponentObserver.INSTANCE.get(this)
                 .addOverviewChangeListener(mOverviewChangeListener);
-        LauncherPrefs.get(this).addListener(this, ALL_APP_PREDICTION_SHOW);
+        //LauncherPrefs.get(this).addListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override

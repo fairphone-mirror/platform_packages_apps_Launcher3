@@ -69,11 +69,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.app.ActivityOptions;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ShortcutInfo;
 import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.display.DisplayManager;
@@ -83,7 +85,10 @@ import android.os.Bundle;
 import android.os.IRemoteCallback;
 import android.os.SystemProperties;
 import android.os.Trace;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -170,6 +175,10 @@ import com.android.launcher3.util.StableViewInfo;
 import com.android.launcher3.util.StartActivityParams;
 import com.android.launcher3.util.TouchController;
 import com.android.launcher3.views.FloatingIconView;
+import com.android.launcher3.widget.LauncherWidgetHolder;
+import com.android.launcher3.widget.WidgetManagerHelper;
+import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
+import com.android.launcher3.widget.PendingAddWidgetInfo;
 import com.android.quickstep.OverviewCommandHelper;
 import com.android.quickstep.OverviewComponentObserver;
 import com.android.quickstep.OverviewComponentObserver.OverviewChangeListener;
@@ -228,12 +237,21 @@ import android.content.SharedPreferences;
 public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         SystemShortcut.BubbleActivityStarter,
         SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String TAG = "QuickstepLauncher.java";
     private static final boolean TRACE_LAYOUTS =
             SystemProperties.getBoolean("persist.debug.trace_layouts", false);
     private static final String TRACE_RELAYOUT_CLASS =
             SystemProperties.get("persist.debug.trace_request_layout_class", null);
 
     protected static final String RING_APPEAR_ANIMATION_PREFIX = "RingAppearAnimation\t";
+
+    private static final String ORANGE_APP_INSTALLED = "def_operator_app_installed";
+    private static final String OPERATOR_APP_LIST_KEY = "def_operator_applist";
+    private static final String ORANGE_WIDGET_PREFERENCES = "orange_widget_preferences";
+    //Unlock the delay between the launcher and the start of the widget resolution to prevent the resolution from being unsuccessful due to the fact that the launcher is not yet displayed
+    private static final long DELAY_MILLIS = 500;
+    private static final String[][] operatorAppPackageListForOrange = new String[][]{{"com.orange.update","0","1","4"}};
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     private FixedContainerItems mAllAppsPredictions;
     private HotseatPredictionController mHotseatPredictionController;
@@ -670,7 +688,14 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                 }
                 break;
             }
-
+        }
+        boolean isStateToNormal = (getStateManager().getState() == NORMAL);
+        if (isStateToNormal) {
+            SharedPreferences mSharedPreferences = asContext().getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
+            boolean isOrangeAppInstalled = mSharedPreferences.getBoolean(ORANGE_APP_INSTALLED,false);
+            if (isOrangeApp() && isOrangeAppInstalled) {
+                checkAppAndFindSpaceOnWorkspace();
+            }
         }
     }
 
@@ -1077,6 +1102,58 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     protected void onDeferredResumed() {
         super.onDeferredResumed();
         handlePendingActivityRequest();
+        SharedPreferences mSharedPreferences = asContext().getSharedPreferences(ORANGE_WIDGET_PREFERENCES,Context.MODE_PRIVATE);
+        boolean isOrangeAppInstalled = mSharedPreferences.getBoolean(ORANGE_APP_INSTALLED,false);
+        if (isOrangeAppInstalled) {
+            handler.postDelayed(task,DELAY_MILLIS);
+        }
+    }
+
+    private Runnable task = new Runnable(){
+        @Override
+        public void run(){
+            if (isOrangeApp()) {
+                checkAppAndFindSpaceOnWorkspace();
+            }
+        }
+    };
+
+    private boolean isOrangeApp() {
+        String operatorAppList = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+        //mcc:208 mcn:01;mcc:206 mcn:10;mcc:214 mcn:03
+        boolean isOrangeApp = false;
+        if(("20801".equals(mccmnc) || "20610".equals(mccmnc) || "21403".equals(mccmnc)) &&
+            (operatorAppList == null || !operatorAppList.contains(operatorAppPackageListForOrange[0][0]))){
+            isOrangeApp = true;
+        }
+        return isOrangeApp;
+    }
+
+    private void checkAppAndFindSpaceOnWorkspace() {
+        WidgetManagerHelper widgetManager = new WidgetManagerHelper(getApplicationContext());
+        for (AppWidgetProviderInfo widgetInfo : widgetManager.getAllProviders(null)) {
+            LauncherAppWidgetProviderInfo launcherWidgetInfo =
+                    LauncherAppWidgetProviderInfo.fromProviderInfo(getApplicationContext(), widgetInfo);
+            if (widgetInfo.provider.toString().contains("com.orange.update.widget.ComboFolderWidgetProvider")) {
+                PendingAddWidgetInfo mPendingAddWidgetInfo = new PendingAddWidgetInfo(launcherWidgetInfo,Favorites.CONTAINER_DESKTOP);
+                getAccessibilityDelegate().addToWorkspace(mPendingAddWidgetInfo,
+                    /*accessibility=*/ false,
+                    /*finishCallback=*/ (success) -> {
+                    String operatorAppListCallback = Settings.Secure.getString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY);
+                    boolean has = false;
+                    if (operatorAppListCallback != null && operatorAppListCallback.contains(operatorAppPackageListForOrange[0][0])) {
+                        has = true;
+                    }
+                    android.util.Log.d(TAG, "The operator app add to workspace saved:"+has);
+                    if (!has) {
+                        operatorAppListCallback = operatorAppListCallback +","+operatorAppPackageListForOrange[0][0];
+                        boolean isSaveSuccesses = Settings.Secure.putString(getApplicationContext().getContentResolver(), OPERATOR_APP_LIST_KEY,operatorAppListCallback);
+                        android.util.Log.d(TAG, "Save the Operator App PackageName isSaveSuccesses:"+isSaveSuccesses);
+                    }
+                });
+            }
+        }
     }
 
     private void handlePendingActivityRequest() {

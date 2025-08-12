@@ -1771,6 +1771,13 @@ public class CellLayout extends ViewGroup {
         return mOccupied.findVacantCell(cellXY, spanX, spanY);
     }
 
+    public boolean findCellForSpan(int[] cellXY,int cellX,int cellY, int spanX, int spanY) {
+        if (cellXY == null) {
+            cellXY = new int[2];
+        }
+        return mOccupied.findVacantCell(cellXY,cellX,cellY, spanX, spanY);
+    }
+
     /**
      * A drag event has begun over this layout.
      * It may have begun over this layout (in which case onDragChild is called first),

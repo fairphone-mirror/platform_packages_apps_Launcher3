@@ -87,6 +87,7 @@ public class HotseatPredictionController implements DragController.DragListener,
     private static final int FLAG_FILL_IN_PROGRESS = 1 << 2;
     private static final int FLAG_REMOVING_PREDICTED_ICON = 1 << 3;
 
+    private boolean closeEdu = true;
     private int mHotSeatItemsCount;
 
     private QuickstepLauncher mLauncher;
@@ -190,6 +191,9 @@ public class HotseatPredictionController implements DragController.DragListener,
     }
 
     private void fillGapsWithPrediction(boolean animate) {
+        if (closeEdu) {
+            return;
+        }
         if (mPauseFlags != 0) {
             return;
         }

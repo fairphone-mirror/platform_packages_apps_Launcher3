@@ -123,13 +123,35 @@ object LauncherDbUtils {
         val userSerial = UserCache.INSTANCE[context].getSerialNumberForUser(Process.myUserHandle())
         dropTable(toDb, toTable)
         LauncherSettings.Favorites.addTableToDb(toDb, userSerial, false, toTable)
+
+        val isFromDbExists = tableExists(fromDb,fromTable);
+        val isToDbExists = tableExists(toDb,toTable);
+        if (!isFromDbExists || !isToDbExists) {
+            return;
+        }
+
+        val fromDbCursor = fromDb.rawQuery("SELECT * FROM "+fromTable, null);
+        val fromDbColumnCount = fromDbCursor.getColumnCount();
+        val toDbCursor = toDb.rawQuery("SELECT * FROM "+toTable, null);
+        val toDbColumnCount = toDbCursor.getColumnCount();
+
         if (fromDb != toDb) {
-            toDb.run {
-                execSQL("ATTACH DATABASE '${fromDb.path}' AS from_db")
-                execSQL(
-                    "INSERT INTO $toTable SELECT ${LauncherSettings.Favorites.getColumns(userSerial)} FROM from_db.$fromTable"
-                )
-                execSQL("DETACH DATABASE 'from_db'")
+            if (fromDbColumnCount != toDbColumnCount) {
+                toDb.run{
+                    execSQL("ATTACH DATABASE '${fromDb.path}' AS from_db");
+                    execSQL(
+                        "INSERT INTO $toTable (_id,title,intent,container,screen,cellX,cellY,spanX,spanY,itemType,appWidgetId,icon,appWidgetProvider,modified,restored,profileId,rank,options,appWidgetSource) SELECT _id,title,intent,container,screen,cellX,cellY,spanX,spanY,itemType,appWidgetId,icon,appWidgetProvider,modified,restored,profileId,rank,options,appWidgetSource FROM from_db.$fromTable"
+                    )
+                    execSQL("DETACH DATABASE 'from_db'")
+                }
+            } else {
+                toDb.run {
+                    execSQL("ATTACH DATABASE '${fromDb.path}' AS from_db")
+                    execSQL(
+                        "INSERT INTO $toTable SELECT ${LauncherSettings.Favorites.getColumns(userSerial)} FROM from_db.$fromTable"
+                    )
+                    execSQL("DETACH DATABASE 'from_db'")
+                }
             }
         } else {
             toDb.run {

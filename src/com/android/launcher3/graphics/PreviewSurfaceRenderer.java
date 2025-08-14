@@ -345,7 +345,11 @@ public class PreviewSurfaceRenderer {
     @WorkerThread
     private void loadModelData() {
         final Context inflationContext = getPreviewContext();
-        if (!mGridName.equals(LauncherPrefs.INSTANCE.get(mContext).get(GRID_NAME))
+        String gridNamePrefs = LauncherPrefs.INSTANCE.get(mContext).get(GRID_NAME);
+        if (mGridName == null || gridNamePrefs == null) {
+            return;
+        }
+        if (!mGridName.equals(gridNamePrefs)
                 || !mShapeKey.equals(LauncherPrefs.INSTANCE.get(mContext).get(PREF_ICON_SHAPE))
                 || !TextUtils.isEmpty(mLayoutXml)) {
 

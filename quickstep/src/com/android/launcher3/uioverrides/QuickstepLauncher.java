@@ -233,10 +233,11 @@ import java.util.stream.Stream;
 import com.android.launcher3.LauncherPrefs;
 import static com.android.launcher3.LauncherPrefs.ALL_APP_PREDICTION_SHOW;
 import android.content.SharedPreferences;
+import com.android.launcher3.LauncherPrefChangeListener;
 
 public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         SystemShortcut.BubbleActivityStarter,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        LauncherPrefChangeListener {
     private static final String TAG = "QuickstepLauncher.java";
     private static final boolean TRACE_LAYOUTS =
             SystemProperties.getBoolean("persist.debug.trace_layouts", false);
@@ -560,7 +561,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    public void onPrefChanged(String s) {
         if (LauncherPrefs.ALL_APP_PREDICTION_SHOW.getSharedPrefKey().equals(s)) {
             boolean AllAppsPredictionshow = LauncherPrefs.get(this).get(ALL_APP_PREDICTION_SHOW);
             if(AllAppsPredictionshow){
@@ -635,7 +636,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         mHotseatPredictionController.destroy();
         if (mViewCapture != null) mViewCapture.close();
         removeBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
-        //LauncherPrefs.get(this).removeListener(this, ALL_APP_PREDICTION_SHOW);
+        LauncherPrefs.get(this).removeListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override
@@ -767,7 +768,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         View.setTracedRequestLayoutClassClass(TRACE_RELAYOUT_CLASS);
         OverviewComponentObserver.INSTANCE.get(this)
                 .addOverviewChangeListener(mOverviewChangeListener);
-        //LauncherPrefs.get(this).addListener(this, ALL_APP_PREDICTION_SHOW);
+        LauncherPrefs.get(this).addListener(this, ALL_APP_PREDICTION_SHOW);
     }
 
     @Override

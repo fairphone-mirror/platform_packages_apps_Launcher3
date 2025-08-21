@@ -137,6 +137,7 @@ import com.android.launcher3.model.BgDataModel.FixedContainerItems;
 import com.android.launcher3.model.WellbeingModel;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.ModelDbController;
+import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.provider.LauncherDbUtils;
 import com.android.launcher3.popup.SystemShortcut;
 import com.android.launcher3.proxy.ProxyActivityStarter;
@@ -1146,7 +1147,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     };
 
     private boolean isWidgetInDB(){
-        ModelDbController mModelDbController  = new ModelDbController(getApplicationContext());
+        ModelDbController mModelDbController  = LauncherAppState.getInstance(asContext()).getModel().getModelDbController();
         boolean isWidgetInDB = LauncherDbUtils.queryWidgetIsInDB(mModelDbController.getDb(),Favorites.TABLE_NAME,
             Favorites.APPWIDGET_PROVIDER,Favorites.ITEM_TYPE+" = "+Favorites.ITEM_TYPE_APPWIDGET,"com.orange.update.widget.ComboFolderWidgetProvider");
         android.util.Log.d(TAG, "The information about the app widget already stored in the database:"+isWidgetInDB);

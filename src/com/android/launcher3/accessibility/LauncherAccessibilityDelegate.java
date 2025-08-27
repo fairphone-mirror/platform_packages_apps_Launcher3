@@ -12,6 +12,7 @@ import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_NOT_PINNABL
 
 import android.animation.AnimatorSet;
 import android.appwidget.AppWidgetProviderInfo;
+import android.content.ComponentName;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -365,8 +366,9 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         CellLayout layout = (CellLayout) workspace.getPageAt(screenIndex);
 
         boolean found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+        ComponentName mComponentName = info.getTargetComponent();
 
-        if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+        if (mComponentName != null && "com.orange.update.widget.ComboFolderWidgetProvider".equals(mComponentName.getClassName()) && isOrangeOperator) {
             if (screenId == 0) {
                 found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
             } else {
@@ -379,7 +381,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
             screenId = workspaceScreens.get(screenIndex);
             layout = (CellLayout) workspace.getPageAt(screenIndex);
             found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
-            if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+            if (mComponentName != null && "com.orange.update.widget.ComboFolderWidgetProvider".equals(mComponentName.getClassName()) && isOrangeOperator) {
                 if (screenId == 0) {
                     found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
                 } else {
@@ -403,7 +405,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         screenId = emptyScreenIds.getArray().get(0);
         layout = workspace.getScreenWithId(screenId);
         found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
-        if ("com.orange.update.widget.ComboFolderWidgetProvider".equals(info.getTargetComponent().getClassName()) && isOrangeOperator) {
+        if (mComponentName != null && "com.orange.update.widget.ComboFolderWidgetProvider".equals(mComponentName.getClassName()) && isOrangeOperator) {
             if (screenId == 0) {
                 found = layout.findCellForSpan(outCoordinates,Integer.valueOf(operatorAppPackageListForOrange[0][2])/*cellX*/,Integer.valueOf(operatorAppPackageListForOrange[0][3])/*cellY*/, info.spanX, info.spanY);
             } else {

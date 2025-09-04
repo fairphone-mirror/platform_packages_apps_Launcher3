@@ -808,18 +808,20 @@ public class TaskbarView extends FrameLayout implements FolderIcon.FolderIconPar
                 } else {
                     iconEnd = startSpacingPx + spaceNeeded;
                 }
-                boolean needMoreSpaceForNav = layoutRtl
-                        ? navSpaceNeeded > (iconEnd - spaceNeeded)
-                        : iconEnd > (right - navSpaceNeeded);
-                if (needMoreSpaceForNav) {
-                    // Add offset to account for nav bar when taskbar is centered
-                    int offset = layoutRtl
-                            ? navSpaceNeeded - (centerAlignIconEnd - spaceNeeded)
-                            : (right - navSpaceNeeded) - centerAlignIconEnd;
-                    iconEnd = centerAlignIconEnd + offset;
-                }
             }
         }
+        // Refer to FP5V
+        boolean needMoreSpaceForNav = layoutRtl
+                ? navSpaceNeeded > (iconEnd - spaceNeeded)
+                : iconEnd > (right - navSpaceNeeded);
+        if (needMoreSpaceForNav) {
+            // Add offset to account for nav bar when taskbar is centered
+            int offset = layoutRtl
+                    ? navSpaceNeeded - (centerAlignIconEnd - spaceNeeded)
+                    : (right - navSpaceNeeded) - centerAlignIconEnd;
+            iconEnd = centerAlignIconEnd + offset;
+        }
+
 
         // Currently, we support only one device with display cutout and we only are concern about
         // it when the bottom rect is present and non empty

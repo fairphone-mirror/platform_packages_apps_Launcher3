@@ -168,6 +168,17 @@ public class SecondarySystemUIProxy implements ISystemUiProxy, SafeCloseable{
     }
 
     @Override
+    public void onKeyEvent(int keycode) {
+        if (mSystemUiProxy != null) {
+            try {
+                mSystemUiProxy.onKeyEvent(keycode);
+            } catch (RemoteException e) {
+                Log.w(TAG, "Failed call onKeyEvent", e);
+            }
+        }
+    }
+
+    @Override
     public void onImeSwitcherPressed() {
         if (mSystemUiProxy != null) {
             try {

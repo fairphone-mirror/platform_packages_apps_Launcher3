@@ -1361,6 +1361,7 @@ public class TaskbarManager implements DisplayDecorationListener {
                     if (oldUiNightMode == newUiNightMode) {
                         configDiff &= ~ActivityInfo.CONFIG_UI_MODE;
                     }
+                    mSharedState.navButtonsDarkIntensity = (newUiNightMode == Configuration.UI_MODE_NIGHT_YES)?0.0f:1.0f;
                 }
 
                 debugTaskbarManager("onConfigurationChanged: | configDiff="

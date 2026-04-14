@@ -17,6 +17,7 @@
 package com.android.launcher3.taskbar.navbutton
 
 import android.content.res.Resources
+import android.provider.Settings
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -25,6 +26,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Space
 import com.android.launcher3.R
+import com.android.launcher3.taskbar.NavbarButtonsViewController
 import com.android.launcher3.taskbar.TaskbarActivityContext
 
 class PhonePortraitNavLayoutter(
@@ -78,9 +80,17 @@ class PhonePortraitNavLayoutter(
         navButtonContainer.removeAllViews()
         navButtonContainer.orientation = LinearLayout.HORIZONTAL
 
-        navButtonContainer.addView(backButton)
-        navButtonContainer.addView(homeButton)
-        navButtonContainer.addView(recentsButton)
+        val navigationBarSwap = Settings.Secure.getInt(context.contentResolver,
+            NavbarButtonsViewController.NAV_BAR_BUTTON_SWAP_ENABLED, 0)
+        if (navigationBarSwap == 0){
+            navButtonContainer.addView(backButton)
+            navButtonContainer.addView(homeButton)
+            navButtonContainer.addView(recentsButton)
+        } else {
+            navButtonContainer.addView(recentsButton)
+            navButtonContainer.addView(homeButton)
+            navButtonContainer.addView(backButton)
+        }
 
         navButtonContainer.layoutParams = navContainerParams
         navButtonContainer.gravity = Gravity.CENTER

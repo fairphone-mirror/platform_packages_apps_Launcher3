@@ -15,10 +15,13 @@
  */
 package com.android.launcher3.taskbar;
 
+import static android.os.UserHandle.USER_CURRENT;
+
 import static android.view.View.AccessibilityDelegate;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewTreeObserver.InternalInsetsInfo.TOUCHABLE_INSETS_REGION;
 import static android.view.WindowManager.LayoutParams.TYPE_NAVIGATION_BAR_PANEL;
+import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_3BUTTON_OVERLAY;
 
 import static com.android.launcher3.LauncherAnimUtils.ROTATION_DRAWABLE_PERCENT;
 import static com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_X;
@@ -60,9 +63,12 @@ import android.annotation.IdRes;
 import android.annotation.LayoutRes;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.om.IOverlayManager;
+import android.content.om.OverlayInfo;
 import android.content.pm.ActivityInfo.Config;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -75,7 +81,12 @@ import android.graphics.drawable.RotateDrawable;
 import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.os.SystemProperties;
+import android.provider.Settings;
+import android.util.Log;
 import android.util.Property;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
@@ -257,6 +268,9 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
 
     private final Runnable mAutoDim = () -> mTaskbarTransitions.setAutoDim(true);
 
+    public static String NAV_BAR_BUTTON_SWAP_ENABLED = "nav_bar_button_swap_enabled";
+    ContentObserver mNavBarOrderContentObserver;
+
     public NavbarButtonsViewController(TaskbarActivityContext context,
             @Nullable Context navigationBarPanelContext, NearestTouchFrame navButtonsView,
             Handler handler) {
@@ -289,6 +303,30 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
     public void init(TaskbarControllers controllers) {
         mControllers = controllers;
         setupController();
+
+        try {
+            IOverlayManager overlayManager = IOverlayManager.Stub.asInterface(
+                    ServiceManager.getService(Context.OVERLAY_SERVICE));
+            if (overlayManager == null){
+                Log.e(NavbarButtonsViewController.class.getSimpleName(), "Get overlay service fail！");
+                return;
+            }
+            OverlayInfo threeButtonInfo = overlayManager.getOverlayInfo(NAV_BAR_MODE_3BUTTON_OVERLAY,
+                    USER_CURRENT);
+            if (threeButtonInfo != null && threeButtonInfo.isEnabled()) {
+                mNavBarOrderContentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+                    @Override
+                    public void onChange(boolean selfChange) {
+                        updateButtonLayoutSpacing();
+                    }
+                };
+                mContext.getContentResolver().registerContentObserver(
+                        Settings.Secure.getUriFor(NAV_BAR_BUTTON_SWAP_ENABLED),
+                        false,mNavBarOrderContentObserver);
+            }
+        } catch (RemoteException e) {
+            Log.e(NavbarButtonsViewController.class.getSimpleName(), "RemoteException!",e);
+        }
     }
 
     protected void setupController() {
@@ -1220,6 +1258,10 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         mNavButtonContainer.removeAllViews();
         mEndContextualContainer.removeAllViews();
         mStartContextualContainer.removeAllViews();
+        if (mNavBarOrderContentObserver != null){
+            mContext.getContentResolver().unregisterContentObserver(mNavBarOrderContentObserver);
+            mNavBarOrderContentObserver= null;
+        }
         mAllButtons.clear();
     }
 
